@@ -1,7 +1,6 @@
 #include <pebble.h>
-#include "generic/continuous_bar.h"
-#include "slots.h"
 #include "status_bar.h"
+#include "../layout.h"
 #include "../../models/battery.h"
 #include "../../models/phone_battery.h"
 #include "../../models/bluetooth.h"
@@ -10,8 +9,41 @@
 #include "../../settings.h"
 #include "../fonts.h"
 #include "../colors.h"
+#include "../../subscription.h"
 
-static char s_status_bar_buffer[6];
+typedef enum
+{
+    STATUS_ICON_BLUETOOTH = 0,
+    STATUS_ICON_QUIET_TIME,
+    STATUS_ICON_CHARGING,
+    STATUS_ICON_PLUGGED,
+    STATUS_ICON_LOW_BATTERY,
+    STATUS_ICON_PHONE_CHARGING,
+    STATUS_ICON_PHONE_LOW,
+    STATUS_ICON_GOAL,
+    STATUS_ICON_COUNT,
+} StatusIcon;
+
+typedef struct
+{
+    char glyph;
+    int height;
+    IconColorId color;
+} StatusIconInfo;
+
+static const StatusIconInfo s_icon_info[STATUS_ICON_COUNT] = {
+    {'b', 16, ICON_COLOR_BLUETOOTH},
+    {'q', 19, ICON_COLOR_QUIET_TIME},
+    {'c', 26, ICON_COLOR_COUNT},
+    {'f', 25, ICON_COLOR_COUNT},
+    {'j', 25, ICON_COLOR_LOW_BATTERY},
+    {'y', 25, ICON_COLOR_PHONE_CHARGING},
+    {'d', 25, ICON_COLOR_PHONE_LOW},
+    {'g', 23, ICON_COLOR_GOAL},
+};
+
+static StatusIcon s_icons[STATUS_ICON_COUNT];
+static int s_icon_count;
 static int s_battery_level;
 static bool s_battery_charging;
 static bool s_battery_plugged;
@@ -22,8 +54,14 @@ static bool s_bt_connected;
 static bool s_quiet_time_active;
 static bool s_goal_reached;
 
+#define STATUS_BAR_MAX_SUBSCRIPTION 1
+
+static SubSlot s_slots[STATUS_BAR_MAX_SUBSCRIPTION];
+static StatusBarState s_state;
+static SubList s_list = {s_slots, STATUS_BAR_MAX_SUBSCRIPTION, 0, &s_state};
+
 static Layer *s_layer;
-static char s_slot_mask;
+static bool s_icons_visible;
 static int s_battery_subscription = -1;
 static int s_phone_battery_subscription = -1;
 static int s_bluetooth_subscription = -1;
@@ -36,11 +74,11 @@ static void show_quiet_time_icon(const QuietTimeState *state);
 static void show_watch_battery_icons(const BatteryState *state);
 static void show_phone_battery_icons(const PhoneBatteryState *state);
 static void show_steps_goal_reached_icon(const StepsState *state);
-static void draw_status_icons(GContext *ctx, GRect bounds, GTextAlignment align);
-static void update_status_buffer(void);
-static IconColorId status_icon_color(char glyph);
+static void draw_status_icons(GContext *ctx, GRect bounds);
+static void update_status_icons(void);
+static void push_icon(StatusIcon icon);
 
-void status_bar_init(char slot_mask, GRect frame)
+void status_bar_init(void)
 {
     s_layer = NULL;
     s_battery_subscription = -1;
@@ -48,12 +86,8 @@ void status_bar_init(char slot_mask, GRect frame)
     s_bluetooth_subscription = -1;
     s_quiet_time_subscription = -1;
     s_steps_subscription = -1;
-    if (slot_mask == 0)
-    {
-        return;
-    }
 
-    s_status_bar_buffer[0] = 0;
+    s_icon_count = 0;
     s_battery_level = 0;
     s_battery_charging = false;
     s_battery_plugged = false;
@@ -63,9 +97,10 @@ void status_bar_init(char slot_mask, GRect frame)
     s_bt_connected = true;
     s_quiet_time_active = false;
     s_goal_reached = false;
+    s_state.has_icons = false;
+    s_icons_visible = false;
 
-    s_slot_mask = slot_mask;
-    s_layer = layer_create(frame);
+    s_layer = layer_create(GRect(STATUS_BAR_X, STATUS_BAR_Y, STATUS_BAR_W, STATUS_BAR_H));
     layer_set_update_proc(s_layer, status_bar_update_proc);
     layer_add_child(layout_parent_layer(), s_layer);
 
@@ -102,132 +137,58 @@ void status_bar_deinit(void)
     }
 }
 
+void status_bar_set_icons_visible(bool visible)
+{
+    if (s_icons_visible == visible)
+    {
+        return;
+    }
+    s_icons_visible = visible;
+    if (s_layer)
+    {
+        layer_mark_dirty(s_layer);
+    }
+}
+
+int status_bar_subscribe(void (*on_change)(const StatusBarState *state))
+{
+    return ag_subscription_subscribe(&s_list, SUB_FN(on_change), 0, NULL, NULL);
+}
+
+int status_bar_unsubscribe(int subscription_handle)
+{
+    return ag_subscription_unsubscribe(&s_list, subscription_handle, NULL, NULL);
+}
+
+static void push_icon(StatusIcon icon)
+{
+    if (s_icon_count >= STATUS_ICON_COUNT)
+    {
+        return;
+    }
+    s_icons[s_icon_count++] = icon;
+}
+
 static void status_bar_update_proc(Layer *layer, GContext *ctx)
 {
-    const SlotPlaceholder placeholder = settings_get_text_placeholder(SLOT_CONTENT_ICONS);
-
-    if (s_status_bar_buffer[0] == '\0')
+    if (!s_icons_visible || s_icon_count == 0)
     {
-        if (placeholder != SLOT_PLACEHOLDER_NONE)
-        {
-            continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_ICONS));
-        }
         return;
     }
 
-    if (placeholder != SLOT_PLACEHOLDER_NONE)
-    {
-        continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, false, false, colors_get_placeholder(PLACEHOLDER_ICONS));
-    }
-
-    GRect bounds = GRect(0, 0, SLOTS_SINGLE_W, SLOTS_H);
-    GTextAlignment align = GTextAlignmentLeft;
-    const SlotAlignment alignment = settings_get_text_alignment(SLOT_CONTENT_ICONS);
-
-    (void)alignment;
-
-    switch (s_slot_mask)
-    {
-    case 0:
-        break;
-    case 1:
-        bounds = GRect(SLOTS_3DX, 0, SLOTS_SINGLE_W + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        align = GTextAlignmentRight;
-        break;
-    case 2:
-        bounds = GRect(SLOTS_2DX, 0, SLOTS_SINGLE_W + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        align = GTextAlignmentCenter;
-        break;
-    case 3:
-        bounds = GRect(SLOTS_2DX, 0, (2 * SLOTS_SINGLE_W) + SLOTS_GAP + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        align = GTextAlignmentRight;
-        break;
-    case 4:
-        break;
-    case 5:
-        if (alignment == SLOT_ALIGN_RIGHT)
-        {
-            bounds = GRect(SLOTS_3DX, 0, SLOTS_SINGLE_W + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        }
-        break;
-    case 6:
-        bounds = GRect(0, 0, 2 * SLOTS_SINGLE_W + SLOTS_GAP + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        break;
-    case 7:
-        bounds = GRect(0, 0, 3 * SLOTS_SINGLE_W + 2 * SLOTS_GAP + SLOT_TEXT_WIDTH_EXTRA, SLOTS_H);
-        align = GTextAlignmentCenter;
-        break;
-    default:
-    }
-
-    switch (alignment)
-    {
-    case SLOT_ALIGN_AUTOMATIC:
-        break;
-    case SLOT_ALIGN_LEFT:
-        align = GTextAlignmentLeft;
-        break;
-    case SLOT_ALIGN_RIGHT:
-        align = GTextAlignmentRight;
-        break;
-    case SLOT_ALIGN_CENTER:
-        align = GTextAlignmentCenter;
-        break;
-    default:
-    }
-
-    GSize icons_size = graphics_text_layout_get_content_size_with_attributes(
-        s_status_bar_buffer,
-        fonts_get_small_font(),
-        bounds,
-        GTextOverflowModeTrailingEllipsis,
-        align,
-        NULL);
-
-    graphics_context_set_fill_color(ctx, colors_get(COLOR_CLOCK_BACKGROUND));
-    switch (align)
-    {
-    case GTextAlignmentLeft:
-        graphics_fill_rect(
-            ctx,
-            GRect(bounds.origin.x, 0, icons_size.w + PLACEHOLDER_ICON_GAP - TEXT_BG_TRIM, SLOTS_H),
-            0,
-            GCornerNone);
-
-        break;
-    case GTextAlignmentCenter:
-
-        graphics_fill_rect(
-            ctx,
-            GRect(bounds.origin.x + (bounds.size.w - icons_size.w) / 2 - PLACEHOLDER_ICON_GAP, 0, icons_size.w + PLACEHOLDER_ICON_GAP + PLACEHOLDER_ICON_GAP - TEXT_BG_TRIM, SLOTS_H),
-            0,
-            GCornerNone);
-        break;
-    case GTextAlignmentRight:
-        graphics_fill_rect(
-            ctx,
-            GRect(bounds.origin.x + bounds.size.w - icons_size.w - PLACEHOLDER_ICON_GAP, 0, icons_size.w + PLACEHOLDER_ICON_GAP, SLOTS_H),
-            0,
-            GCornerNone);
-        break;
-    default:
-        break;
-    }
-
-    graphics_context_set_antialiased(ctx, false);
-    draw_status_icons(ctx, bounds, align);
+    draw_status_icons(ctx, layer_get_bounds(layer));
 }
 
 static void show_bluetooth_disconnected_icon(const BluetoothState *state)
 {
     s_bt_connected = state->connected;
-    update_status_buffer();
+    update_status_icons();
 }
 
 static void show_quiet_time_icon(const QuietTimeState *state)
 {
     s_quiet_time_active = state->active;
-    update_status_buffer();
+    update_status_icons();
 }
 
 static void show_watch_battery_icons(const BatteryState *state)
@@ -236,140 +197,91 @@ static void show_watch_battery_icons(const BatteryState *state)
     s_battery_charging = state->is_charging;
     s_battery_plugged = state->is_plugged;
     s_battery_low = state->is_low;
-    update_status_buffer();
+    update_status_icons();
 }
 
 static void show_phone_battery_icons(const PhoneBatteryState *state)
 {
     s_phone_battery_charging = state->available && state->is_charging;
     s_phone_battery_low = state->available && state->is_low;
-    update_status_buffer();
+    update_status_icons();
 }
 
 static void show_steps_goal_reached_icon(const StepsState *state)
 {
     s_goal_reached = state->goal_reached;
-    update_status_buffer();
+    update_status_icons();
 }
 
-static void draw_status_icons(GContext *ctx, GRect bounds, GTextAlignment align)
+static void draw_status_icons(GContext *ctx, GRect bounds)
 {
-    GFont font = fonts_get_small_font();
-    if (!settings_icon_colors_enabled())
+    GFont font = fonts_get_date_font();
+    graphics_context_set_antialiased(ctx, false);
+    int top = bounds.size.h;
+    for (int i = 0; i < s_icon_count; i++)
     {
-        graphics_context_set_text_color(ctx, icons_color_get(ICON_COLOR_COUNT));
-        graphics_draw_text(
-            ctx,
-            s_status_bar_buffer,
-            font,
-            bounds,
-            GTextOverflowModeTrailingEllipsis,
-            align,
-            NULL);
-        return;
-    }
-
-    const int len = (int)strlen(s_status_bar_buffer);
-    int widths[8];
-    int total = 0;
-    for (int i = 0; i < len && i < 8; i++)
-    {
-        char glyph[2] = {s_status_bar_buffer[i], '\0'};
-        GSize size = graphics_text_layout_get_content_size_with_attributes(
-            glyph,
-            font,
-            bounds,
-            GTextOverflowModeTrailingEllipsis,
-            GTextAlignmentLeft,
-            NULL);
-        widths[i] = size.w;
-        total += size.w;
-    }
-
-    int x = bounds.origin.x;
-    if (align == GTextAlignmentCenter)
-    {
-        x += (bounds.size.w - total) / 2;
-    }
-    else if (align == GTextAlignmentRight)
-    {
-        x += bounds.size.w - total;
-    }
-
-    for (int i = 0; i < len && i < 8; i++)
-    {
-        char glyph[2] = {s_status_bar_buffer[i], '\0'};
-        graphics_context_set_text_color(ctx, icons_color_get(status_icon_color(s_status_bar_buffer[i])));
+        const StatusIconInfo *icon = &s_icon_info[s_icons[i]];
+        top -= icon->height;
+        char glyph[2] = {icon->glyph, '\0'};
+        graphics_context_set_text_color(ctx, icons_color_get(icon->color));
         graphics_draw_text(
             ctx,
             glyph,
             font,
-            GRect(x, bounds.origin.y, widths[i], bounds.size.h),
-            GTextOverflowModeTrailingEllipsis,
+            GRect(0, top, STATUS_BAR_W, icon->height),
+            GTextOverflowModeFill,
             GTextAlignmentLeft,
             NULL);
-        x += widths[i];
+        top -= STATUS_BAR_ICON_GAP;
     }
 }
 
-static void update_status_buffer(void)
+static void update_status_icons(void)
 {
-    int i = 0;
+    s_icon_count = 0;
 
-    if (!s_bt_connected)
-    {
-        s_status_bar_buffer[i++] = 'b';
-    }
     if (s_quiet_time_active)
     {
-        s_status_bar_buffer[i++] = 'q';
+        push_icon(STATUS_ICON_QUIET_TIME);
+    }
+    if (!s_bt_connected)
+    {
+        push_icon(STATUS_ICON_BLUETOOTH);
     }
     if (s_battery_charging)
     {
-        s_status_bar_buffer[i++] = 'c';
+        push_icon(STATUS_ICON_CHARGING);
     }
     else if (s_battery_plugged)
     {
-        s_status_bar_buffer[i++] = 'f';
+        push_icon(STATUS_ICON_PLUGGED);
     }
     else if (s_battery_low && settings_low_battery_icon_enabled())
     {
-        s_status_bar_buffer[i++] = 'l';
+        push_icon(STATUS_ICON_LOW_BATTERY);
     }
     if (s_phone_battery_charging && settings_phone_charging_icon_enabled())
     {
-        s_status_bar_buffer[i++] = 'e';
+        push_icon(STATUS_ICON_PHONE_CHARGING);
     }
     else if (s_phone_battery_low && settings_phone_low_battery_icon_enabled())
     {
-        s_status_bar_buffer[i++] = 'd';
+        push_icon(STATUS_ICON_PHONE_LOW);
     }
     if (s_goal_reached)
     {
-        s_status_bar_buffer[i++] = 'g';
+        push_icon(STATUS_ICON_GOAL);
     }
 
-    s_status_bar_buffer[i] = '\0';
-    layer_mark_dirty(s_layer);
-}
-
-static IconColorId status_icon_color(char glyph)
-{
-    switch (glyph)
+    bool has_icons = s_icon_count > 0;
+    if (has_icons != s_state.has_icons)
     {
-    case 'b':
-        return ICON_COLOR_BLUETOOTH;
-    case 'q':
-        return ICON_COLOR_QUIET_TIME;
-    case 'g':
-        return ICON_COLOR_GOAL;
-    case 'l':
-        return ICON_COLOR_LOW_BATTERY;
-    case 'd':
-        return ICON_COLOR_PHONE_LOW;
-    case 'e':
-        return ICON_COLOR_PHONE_CHARGING;
-    default:
-        return ICON_COLOR_COUNT;
+        s_state.has_icons = has_icons;
+        ag_subscription_notify_all(&s_list);
+    }
+
+    if (s_layer)
+    {
+        layer_mark_dirty(s_layer);
     }
 }

@@ -71,7 +71,7 @@ def save_full_frames(frames, durations, path):
 
 
 def main(platforms=None):
-    chosen = ["basalt", "emery", "diorite", "flint", "gabbro"] if platforms is None else platforms
+    chosen = ["emery"] if platforms is None else platforms
     for platform in chosen:
         folder = ROOT / platform
         images = [Image.open(folder / name).convert("RGB") for name in NAMES]

@@ -1,14 +1,15 @@
 # AntiGrav
 
-![AntiGrav on Emery](app-store-assets/emery/preview-fade.gif)
+![AntiGrav mini on Emery](app-store-assets/emery/preview-fade.gif)
 
-[AntiGrav on the Pebble Appstore](https://apps.repebble.com/antigrav_8c9f5118d73c48308c8edcb9)
+[AntiGrav mini on the Pebble Appstore](https://apps.repebble.com/antigrav-mini_82b16c3b6e1347849781f5be)
 
-[AntiGrav on the Rebble App Store](https://apps.rebble.io/en_US/application/6a76faf83f74490009d26021)
+[AntiGrav mini on the Rebble App Store](https://apps.rebble.io/en_US/application/6ae5cd8ebb43f2000989631e)
 
 ## Description
 
-AntiGrav is a digital watchface built for quick glances, with big, large stacked hours and minutes, a flexible slots row, and the date below.
+AntiGrav mini is a digital watchface built for quick glances, with big, large stacked hours and minutes, a flexible slots row, and the date below. 
+This is an alternative version of AntiGrav in which the clock digits are smaller, to make room for a larger date, a larger bar, and a sidebar dedicated to status icons.
 
 Customization
 - Basic and advanced color customization

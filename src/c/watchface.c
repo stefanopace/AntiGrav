@@ -3,6 +3,7 @@
 #include "models/unobstructed.h"
 #include "ui/bluetooth_vibrator.h"
 #include "ui/bar/slots.h"
+#include "ui/bar/status_bar.h"
 #include "ui/fonts.h"
 #include "settings.h"
 #include "ui/clock/clock_section.h"
@@ -50,6 +51,7 @@ static void main_window_load(Window *window)
   colors_init(window);
   fonts_init();
   bluetooth_vibrator_init();
+  status_bar_init();
   clock_section_init();
   date_section_init();
   slots_init();
@@ -65,6 +67,7 @@ static void main_window_unload(Window *window)
   bluetooth_vibrator_deinit();
   date_section_deinit();
   clock_section_deinit();
+  status_bar_deinit();
   fonts_deinit();
 
   ag_unobstructed_deinit();

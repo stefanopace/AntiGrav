@@ -14,15 +14,11 @@ enum
 
 enum
 {
-    SETTINGS_VERSION_FONT_ID = 2,
-    SETTINGS_VERSION_SECONDS_VISIBILITY = 3,
-    SETTINGS_VERSION_COMBO_CONTENT = 4,
-    SETTINGS_VERSION_CURRENT = SETTINGS_VERSION_COMBO_CONTENT,
+    SETTINGS_VERSION_CURRENT = 1,
 };
 
 typedef struct ClaySettings
 {
-    uint8_t deprecated_seconds_visibility;
     SettingsLanguage ui_language;
     bool model_hours_leading_zero_enabled;
     bool model_minutes_leading_zero_enabled;
@@ -32,7 +28,6 @@ typedef struct ClaySettings
     DateFormat ui_date_format;
     DateSeparator ui_date_separator;
     FontId ui_font;
-    uint8_t deprecated_legacy_minutes_digit_style;
     BarStyle ui_battery_style;
     BarStyle ui_steps_style;
     int model_seconds_show_on_tap_duration;
@@ -61,21 +56,13 @@ typedef struct ClaySettings
     SlotContent ui_combo_c_top;
     SlotContent ui_combo_c_bottom;
     bool model_hide_seconds_on_quiet_time;
-    BarStyle deprecated_slot_bar_style[SLOT_COUNT];
-    bool deprecated_slot_bar_mirrored[SLOT_COUNT];
-    BarStyle deprecated_combo_top_bar_style[COMBO_BAR_COUNT];
-    BarStyle deprecated_combo_bottom_bar_style[COMBO_BAR_COUNT];
-    bool deprecated_combo_top_bar_mirrored[COMBO_BAR_COUNT];
-    bool deprecated_combo_bottom_bar_mirrored[COMBO_BAR_COUNT];
     BarStyle ui_phone_bar_style;
     BarStyle ui_seconds_bar_style;
     bool ui_battery_mirrored;
     bool ui_phone_bar_mirrored;
     bool ui_steps_mirrored;
     bool ui_seconds_bar_mirrored;
-    SlotAlignment ui_icons_alignment;
     SlotAlignment ui_seconds_alignment;
-    SlotPlaceholder ui_icons_placeholder;
     SlotPlaceholder ui_seconds_placeholder;
     int ui_battery_color;
     int ui_phone_bar_color;
@@ -86,9 +73,6 @@ typedef struct ClaySettings
     int ui_bar_color;
     bool ui_icon_colors_enabled;
     int ui_icon_color[ICON_COLOR_COUNT];
-    bool ui_invert_colors;
-    GabbroDateContent ui_gabbro_date_above;
-    GabbroDateContent ui_gabbro_date_below;
     PinPopupLarge ui_pin_popup_large;
 } ClaySettings;
 
@@ -173,14 +157,10 @@ static const SettingName s_font_names[] = {
 };
 
 static const SettingName s_date_format_names[] = {
-    {"DayMonthName", DATE_FORMAT_DAY_MONTH_NAME},
-    {"DayMonthNum", DATE_FORMAT_DAY_MONTH_NUM},
-    {"MonthDayNum", DATE_FORMAT_MONTH_DAY_NUM},
-    {"DayMonthYear", DATE_FORMAT_DAY_MONTH_YEAR},
-    {"MonthDayYear", DATE_FORMAT_MONTH_DAY_YEAR},
-    {"YearMonthDay", DATE_FORMAT_YEAR_MONTH_DAY},
-    {"YearDayMonth", DATE_FORMAT_YEAR_DAY_MONTH},
-    {"DayNameMonthDay", DATE_FORMAT_DAY_NAME_MONTH_DAY},
+    {"DayNameDay", DATE_FORMAT_DAY_NAME_DAY},
+    {"DayDayName", DATE_FORMAT_DAY_DAY_NAME},
+    {"DayMonth", DATE_FORMAT_DAY_MONTH},
+    {"MonthDay", DATE_FORMAT_MONTH_DAY},
     {NULL, 0},
 };
 
@@ -188,15 +168,6 @@ static const SettingName s_date_separator_names[] = {
     {"Slash", DATE_SEPARATOR_SLASH},
     {"Dot", DATE_SEPARATOR_DOT},
     {"Hyphen", DATE_SEPARATOR_HYPHEN},
-    {NULL, 0},
-};
-
-static const SettingName s_gabbro_date_names[] = {
-    {"DayName", GABBRO_DATE_DAY_NAME},
-    {"MonthName", GABBRO_DATE_MONTH_NAME},
-    {"DayMonth", GABBRO_DATE_DAY_MONTH},
-    {"MonthDay", GABBRO_DATE_MONTH_DAY},
-    {"Day", GABBRO_DATE_DAY},
     {NULL, 0},
 };
 
@@ -231,12 +202,9 @@ static const SettingName s_combo_names[] = {
 
 static const SettingName s_slot_names[] = {
     {"None", SLOT_CONTENT_NONE},
-    {"Icons", SLOT_CONTENT_ICONS},
     {"Battery", SLOT_CONTENT_BATTERY},
-    {"ProgressBar", SLOT_CONTENT_BATTERY},
     {"Steps", SLOT_CONTENT_STEPS},
     {"PhoneBattery", SLOT_CONTENT_PHONE_BATTERY},
-    {"BatteryCombo", SLOT_CONTENT_COMBO_A},
     {"ComboA", SLOT_CONTENT_COMBO_A},
     {"ComboB", SLOT_CONTENT_COMBO_B},
     {"ComboC", SLOT_CONTENT_COMBO_C},
@@ -253,9 +221,6 @@ static const SettingName s_battery_style_names[] = {
 
 static void default_settings(void);
 static int settings_version(void);
-static void migrate_persisted_font(int version);
-static void migrate_seconds_visibility(int version);
-static void migrate_combo_contents(int version);
 static void settings_save(void);
 static void apply_message(DictionaryIterator *iter);
 static void settings_update(DictionaryIterator *iter);
@@ -313,16 +278,6 @@ DateSeparator settings_get_date_separator()
     return settings.ui_date_separator;
 }
 
-GabbroDateContent settings_get_gabbro_date_above()
-{
-    return settings.ui_gabbro_date_above;
-}
-
-GabbroDateContent settings_get_gabbro_date_below()
-{
-    return settings.ui_gabbro_date_below;
-}
-
 bool settings_advanced_colors_enabled()
 {
     return settings.ui_advanced_colors_enabled;
@@ -331,11 +286,6 @@ bool settings_advanced_colors_enabled()
 bool settings_bar_colors_enabled()
 {
     return settings.ui_bar_colors_enabled;
-}
-
-bool settings_invert_colors_enabled()
-{
-    return settings.ui_invert_colors;
 }
 
 bool settings_icon_colors_enabled()
@@ -384,7 +334,7 @@ SlotAlignment settings_get_text_alignment(SlotContent content)
     {
         return settings.ui_seconds_alignment;
     }
-    return settings.ui_icons_alignment;
+    return SLOT_ALIGN_AUTOMATIC;
 }
 
 SlotPlaceholder settings_get_text_placeholder(SlotContent content)
@@ -393,7 +343,7 @@ SlotPlaceholder settings_get_text_placeholder(SlotContent content)
     {
         return settings.ui_seconds_placeholder;
     }
-    return settings.ui_icons_placeholder;
+    return SLOT_PLACEHOLDER_THICK;
 }
 
 SlotContent settings_get_combo_bar_top(ComboBarId combo)
@@ -525,20 +475,15 @@ void ag_settings_init(void (*reset)(void))
 {
     s_reset = reset;
     default_settings();
-    if (persist_exists(PERSIST_KEY_SETTINGS))
+    if (persist_exists(PERSIST_KEY_SETTINGS) &&
+        persist_get_size(PERSIST_KEY_SETTINGS) == (int)sizeof(settings))
     {
-        const int stored = persist_get_size(PERSIST_KEY_SETTINGS);
-        if (stored > 0 && stored <= (int)sizeof(settings))
+        persist_read_data(PERSIST_KEY_SETTINGS, &settings, sizeof(settings));
+        const int version = settings_version();
+        if (version != SETTINGS_VERSION_CURRENT)
         {
-            persist_read_data(PERSIST_KEY_SETTINGS, &settings, stored);
-            const int version = settings_version();
-            if (version != SETTINGS_VERSION_CURRENT)
-            {
-                migrate_persisted_font(version);
-                migrate_seconds_visibility(version);
-                migrate_combo_contents(version);
-                settings_save();
-            }
+            // Future settings migrations go here
+            settings_save();
         }
     }
 
@@ -620,12 +565,12 @@ static void default_settings(void)
     settings.model_seconds_leading_zero_enabled = true;
     settings.model_day_leading_zero_enabled = true;
     settings.model_month_leading_zero_enabled = true;
-    settings.ui_date_format = DATE_FORMAT_DAY_MONTH_NAME;
+    settings.ui_date_format = DATE_FORMAT_DAY_NAME_DAY;
     settings.ui_date_separator = DATE_SEPARATOR_SLASH;
     settings.ui_language = EN;
     settings.model_seconds_show_on_tap_duration = 10;
     settings.ui_font = FONT_REPLICANT;
-    settings.ui_battery_style = FIVE_BARS;
+    settings.ui_battery_style = CONTINUOUS;
     settings.ui_steps_style = CONTINUOUS;
     settings.ui_bt_icon_enabled = true;
     settings.ui_quiet_time_icon_enabled = true;
@@ -645,12 +590,12 @@ static void default_settings(void)
     settings.ui_combo_c_top = SLOT_CONTENT_BATTERY;
     settings.ui_combo_c_bottom = SLOT_CONTENT_SECONDS;
     settings.model_hide_seconds_on_low_battery = false;
-    settings.model_show_seconds_tap_count = 1;
+    settings.model_show_seconds_tap_count = 0;
     settings.model_step_goal = 10000;
     settings.ui_goal_icon_enabled = true;
-    settings.ui_slot_contents[SLOT_LEFT] = SLOT_CONTENT_ICONS;
+    settings.ui_slot_contents[SLOT_LEFT] = SLOT_CONTENT_BATTERY;
     settings.ui_slot_contents[SLOT_CENTER] = SLOT_CONTENT_BATTERY;
-    settings.ui_slot_contents[SLOT_RIGHT] = SLOT_CONTENT_SECONDS;
+    settings.ui_slot_contents[SLOT_RIGHT] = SLOT_CONTENT_SECONDS_BAR;
     settings.ui_advanced_colors_enabled = false;
     settings.ui_palette_override[COLOR_USER_BACKGROUND] = 0x000000;
     settings.ui_palette_override[COLOR_USER_TEXT] = 0xFFFFFF;
@@ -664,13 +609,11 @@ static void default_settings(void)
     settings.model_hide_seconds_on_quiet_time = false;
     settings.ui_phone_bar_style = CONTINUOUS;
     settings.ui_seconds_bar_style = FIVE_BARS;
-    settings.ui_battery_mirrored = false;
+    settings.ui_battery_mirrored = true;
     settings.ui_phone_bar_mirrored = false;
     settings.ui_steps_mirrored = false;
     settings.ui_seconds_bar_mirrored = false;
-    settings.ui_icons_alignment = SLOT_ALIGN_AUTOMATIC;
     settings.ui_seconds_alignment = SLOT_ALIGN_AUTOMATIC;
-    settings.ui_icons_placeholder = SLOT_PLACEHOLDER_THICK;
     settings.ui_seconds_placeholder = SLOT_PLACEHOLDER_THICK;
     settings.ui_battery_color = 0x00FFAA;
     settings.ui_phone_bar_color = 0x00FFAA;
@@ -687,14 +630,7 @@ static void default_settings(void)
     {
         settings.ui_icon_color[icon] = 0xFFFFFF;
     }
-    settings.ui_invert_colors = false;
-    settings.ui_gabbro_date_above = GABBRO_DATE_DAY;
-    settings.ui_gabbro_date_below = GABBRO_DATE_MONTH_NAME;
-#if PBL_DISPLAY_WIDTH == 260 && PBL_DISPLAY_HEIGHT == 260
-    settings.ui_pin_popup_large = PIN_POPUP_LARGE_HOURS;
-#else
     settings.ui_pin_popup_large = PIN_POPUP_LARGE_MINUTES;
-#endif
 }
 
 static int settings_version(void)
@@ -704,53 +640,6 @@ static int settings_version(void)
         return 0;
     }
     return persist_read_int(PERSIST_KEY_VERSION);
-}
-
-static void migrate_persisted_font(int version)
-{
-    if (version >= SETTINGS_VERSION_FONT_ID)
-    {
-        return;
-    }
-
-    settings.ui_font = FONT_REPLICANT;
-    settings.deprecated_legacy_minutes_digit_style = 0;
-}
-
-static void migrate_combo_contents(int version)
-{
-    if (version >= SETTINGS_VERSION_COMBO_CONTENT)
-    {
-        return;
-    }
-
-    static const SlotContent from_combo_byte[] = {
-        SLOT_CONTENT_BATTERY,
-        SLOT_CONTENT_PHONE_BATTERY,
-        SLOT_CONTENT_STEPS,
-        SLOT_CONTENT_SECONDS,
-    };
-
-    settings.ui_combo_bar_top = from_combo_byte[(uint8_t)settings.ui_combo_bar_top];
-    settings.ui_combo_bar_bottom = from_combo_byte[(uint8_t)settings.ui_combo_bar_bottom];
-    settings.ui_combo_b_top = from_combo_byte[(uint8_t)settings.ui_combo_b_top];
-    settings.ui_combo_b_bottom = from_combo_byte[(uint8_t)settings.ui_combo_b_bottom];
-    settings.ui_combo_c_top = from_combo_byte[(uint8_t)settings.ui_combo_c_top];
-    settings.ui_combo_c_bottom = from_combo_byte[(uint8_t)settings.ui_combo_c_bottom];
-}
-
-static void migrate_seconds_visibility(int version)
-{
-    if (version >= SETTINGS_VERSION_SECONDS_VISIBILITY)
-    {
-        return;
-    }
-    if (settings.deprecated_seconds_visibility != 3)
-    {
-        settings.model_hide_seconds_on_quiet_time = settings.deprecated_seconds_visibility == 1;
-        settings.deprecated_seconds_visibility = 3;
-    }
-    settings.model_flick_disabled_on_quiet_time = false;
 }
 
 static void settings_save(void)
@@ -787,8 +676,6 @@ static void settings_update(DictionaryIterator *iter)
 
     assign_name(iter, &MESSAGE_KEY_DateFormat, s_date_format_names, &settings.ui_date_format, assign_enum);
     assign_name(iter, &MESSAGE_KEY_DateSeparator, s_date_separator_names, &settings.ui_date_separator, assign_enum);
-    assign_name(iter, &MESSAGE_KEY_GabbroDateAbove, s_gabbro_date_names, &settings.ui_gabbro_date_above, assign_enum);
-    assign_name(iter, &MESSAGE_KEY_GabbroDateBelow, s_gabbro_date_names, &settings.ui_gabbro_date_below, assign_enum);
 
     assign_name(iter, &MESSAGE_KEY_Language, s_language_names, &settings.ui_language, assign_enum);
 
@@ -821,9 +708,7 @@ static void settings_update(DictionaryIterator *iter)
     assign_bool(iter, &MESSAGE_KEY_StepGoalMirrored, &settings.ui_steps_mirrored);
     assign_bool(iter, &MESSAGE_KEY_SecondsBarMirrored, &settings.ui_seconds_bar_mirrored);
 
-    assign_name(iter, &MESSAGE_KEY_IconsAlignment, s_alignment_names, &settings.ui_icons_alignment, assign_enum);
     assign_name(iter, &MESSAGE_KEY_SecondsAlignment, s_alignment_names, &settings.ui_seconds_alignment, assign_enum);
-    assign_name(iter, &MESSAGE_KEY_IconsPlaceholder, s_placeholder_names, &settings.ui_icons_placeholder, assign_enum);
     assign_name(iter, &MESSAGE_KEY_SecondsPlaceholder, s_placeholder_names, &settings.ui_seconds_placeholder, assign_enum);
 
     assign_bool(iter, &MESSAGE_KEY_HideSecondsOnLowBattery, &settings.model_hide_seconds_on_low_battery);
@@ -870,8 +755,6 @@ static void settings_update(DictionaryIterator *iter)
 
     assign_bool(iter, &MESSAGE_KEY_BarColors, &settings.ui_bar_colors_enabled);
     assign_bool(iter, &MESSAGE_KEY_IconColors, &settings.ui_icon_colors_enabled);
-
-    assign_bool(iter, &MESSAGE_KEY_InvertColors, &settings.ui_invert_colors);
 
     settings_save();
 }

@@ -12,7 +12,7 @@ fi
 # Relaunch pebble emu-app-config after every save.
 # Ctrl+C or a connection error stops the loop.
 # Extra arguments are passed through, for example:
-#   ./scripts/emu-app-config.sh --emulator flint
+#   ./scripts/emu-app-config.sh --emulator emery
 
 SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
 cd "$(cd "$(dirname "$0")/.." && pwd)"

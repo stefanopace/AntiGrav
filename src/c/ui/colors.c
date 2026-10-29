@@ -35,9 +35,6 @@ static const int s_advanced_slots[COLOR_COUNT] = {
     COLOR_USER_DATE,
 };
 
-#if defined(PBL_BW)
-static GColor bw_color(bool background);
-#endif
 static GColor colors_get_shared_bar(void);
 static GColor icons_color_base(void);
 
@@ -66,9 +63,6 @@ void colors_init(Window *window)
 
 GColor seconds_color_get(void)
 {
-#if defined(PBL_BW)
-    return bw_color(false);
-#endif
     if (settings_bar_colors_enabled())
     {
         return s_slots[COLOR_USER_SECONDS];
@@ -82,9 +76,6 @@ GColor seconds_color_get(void)
 
 GColor colors_get(ColorId id)
 {
-#if defined(PBL_BW)
-    return bw_color(id == COLOR_CLOCK_BACKGROUND);
-#endif
     if (id >= COLOR_COUNT)
     {
         return s_slots[COLOR_USER_TEXT];
@@ -102,9 +93,6 @@ GColor colors_get(ColorId id)
 
 GColor colors_get_bar(SlotContent content)
 {
-#if defined(PBL_BW)
-    return bw_color(false);
-#endif
     if (!settings_bar_colors_enabled())
     {
         return colors_get_shared_bar();
@@ -123,9 +111,6 @@ GColor colors_get_bar(SlotContent content)
 
 GColor colors_get_placeholder(int placeholder)
 {
-#if defined(PBL_BW)
-    return bw_color(false);
-#endif
     if (!settings_bar_colors_enabled())
     {
         return colors_get_shared_bar();
@@ -139,27 +124,12 @@ GColor colors_get_placeholder(int placeholder)
 
 GColor icons_color_get(IconColorId icon)
 {
-#if defined(PBL_BW)
-    return bw_color(false);
-#endif
     if (icon < ICON_COLOR_COUNT && settings_icon_colors_enabled())
     {
         return s_icon[icon];
     }
     return icons_color_base();
 }
-
-#if defined(PBL_BW)
-static GColor bw_color(bool background)
-{
-    const bool inverted = settings_invert_colors_enabled();
-    if (background)
-    {
-        return inverted ? GColorWhite : GColorBlack;
-    }
-    return inverted ? GColorBlack : GColorWhite;
-}
-#endif
 
 static GColor colors_get_shared_bar(void)
 {

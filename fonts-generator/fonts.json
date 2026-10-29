@@ -1,28 +1,28 @@
 {
     "fonts": [
         {
+            "name": "replicant_seconds",
+            "order": " 0123456789"
+        },
+        {
+            "name": "racer_seconds",
+            "order": " 0123456789"
+        },
+        {
+            "name": "samurai_seconds",
+            "order": " 0123456789"
+        },
+        {
             "name": "replicant",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+            "order": " 0123456789BDFGHJKLMOQRSTVWZaåehilnoöørux/pqbjg-.cfdy*"
         },
         {
             "name": "racer",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+            "order": " 0123456789BDFGHJKLMOQRSTVWZaåehilnoöørux/pqbjg-.cfdy*"
         },
         {
             "name": "samurai",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
-        },
-        {
-            "name": "replicant_flint",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
-        },
-        {
-            "name": "racer_flint",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
-        },
-        {
-            "name": "samurai_flint",
-            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+            "order": " 0123456789BDFGHJKLMOQRSTVWZaåehilnoöørux/pqbjg-.cfdy*"
         }
     ]
 }

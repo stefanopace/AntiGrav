@@ -11,8 +11,8 @@ typedef enum
 } ComboBarPosition;
 
 static void half_bar_render(Layer *layer, GContext *ctx, ComboBarPosition position, BarStyle battery_style, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask);
-static void half_bar_render_continuous(Layer *layer, GContext *ctx, int bar_y, int value, int scale, bool available, bool mirrored, GColor color, char slot_mask);
-static void half_bar_render_segmented(Layer *layer, GContext *ctx, int bar_y, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask);
+static void half_bar_render_continuous(Layer *layer, GContext *ctx, int bar_y, int bar_h, int value, int scale, bool available, bool mirrored, GColor color, char slot_mask);
+static void half_bar_render_segmented(Layer *layer, GContext *ctx, int bar_y, int bar_h, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask);
 
 void combo_bar_render(Layer *layer, GContext *ctx, int top_value, int top_scale, bool top_available, BarStyle top_style, int top_bar_type, bool top_mirrored, GColor top_color, int bottom_value, int bottom_scale, bool bottom_available, BarStyle bottom_style, int bottom_bar_type, bool bottom_mirrored, GColor bottom_color, char slot_mask)
 {
@@ -22,26 +22,25 @@ void combo_bar_render(Layer *layer, GContext *ctx, int top_value, int top_scale,
 
 static void half_bar_render(Layer *layer, GContext *ctx, ComboBarPosition position, BarStyle battery_style, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask)
 {
+    const int bar_h = position == TOP ? COMBO_BAR_TOP_H : COMBO_BAR_BOTTOM_H;
     int bar_y = BAR_Y;
     if (position == BOTTOM)
     {
-        bar_y = BAR_Y + COMBO_BAR_HALF_H + COMBO_BAR_GAP;
+        bar_y = BAR_Y + COMBO_BAR_TOP_H + COMBO_BAR_GAP;
     }
 
     if (battery_style == CONTINUOUS || !available)
     {
-        half_bar_render_continuous(layer, ctx, bar_y, value, scale, available, mirrored, color, slot_mask);
+        half_bar_render_continuous(layer, ctx, bar_y, bar_h, value, scale, available, mirrored, color, slot_mask);
     }
     else
     {
-        half_bar_render_segmented(layer, ctx, bar_y, value, scale, available, bar_type, mirrored, color, slot_mask);
+        half_bar_render_segmented(layer, ctx, bar_y, bar_h, value, scale, available, bar_type, mirrored, color, slot_mask);
     }
 }
 
-static void half_bar_render_continuous(Layer *layer, GContext *ctx, int bar_y, int value, int scale, bool available, bool mirrored, GColor color, char slot_mask)
+static void half_bar_render_continuous(Layer *layer, GContext *ctx, int bar_y, int bar_h, int value, int scale, bool available, bool mirrored, GColor color, char slot_mask)
 {
-
-    int bar_h = COMBO_BAR_HALF_H;
     if (!available)
     {
         value = 1;
@@ -187,7 +186,7 @@ static void half_bar_render_continuous(Layer *layer, GContext *ctx, int bar_y, i
     }
 }
 
-static void half_bar_render_segmented(Layer *layer, GContext *ctx, int bar_y, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask)
+static void half_bar_render_segmented(Layer *layer, GContext *ctx, int bar_y, int bar_h, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask)
 {
-    segmented_bar_render(layer, ctx, value, scale, slot_mask, bar_type, available, bar_y, COMBO_BAR_HALF_H, 0, mirrored, color);
+    segmented_bar_render(layer, ctx, value, scale, slot_mask, bar_type, available, bar_y, bar_h, 0, mirrored, color);
 }

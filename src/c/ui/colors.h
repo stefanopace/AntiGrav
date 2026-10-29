@@ -14,25 +14,16 @@ typedef enum
 } ColorId;
 
 enum {
-    COLOR_USER_SLOT_COUNT = 12,
+    COLOR_USER_SLOT_COUNT = 9,
     COLOR_USER_BACKGROUND = 0,
     COLOR_USER_TEXT = 1,
     COLOR_USER_ACCENT = 2,
     COLOR_USER_HOURS = 3,
     COLOR_USER_MINUTES = 4,
     COLOR_USER_SECONDS = 5,
-    /* Deprecated. Kept so older persisted palettes stay aligned. */
-    COLOR_USER_BAR_LEFT = 6,
-    COLOR_USER_ICONS = 7,
-    /* Deprecated. Kept so older persisted palettes stay aligned. */
-    COLOR_USER_BAR_CENTER = 8,
-    COLOR_USER_DATE = 9,
-    /* Deprecated. Kept so older persisted palettes stay aligned. */
-    COLOR_USER_BAR_RIGHT = 10,
-    COLOR_USER_ADVANCED_BACKGROUND = 11,
-    /* MessageKey aliases kept for Clay / AppMessage compatibility. */
-    COLOR_USER_PRIMARY = COLOR_USER_BACKGROUND,
-    COLOR_USER_SECONDARY = COLOR_USER_TEXT,
+    COLOR_USER_ICONS = 6,
+    COLOR_USER_DATE = 7,
+    COLOR_USER_ADVANCED_BACKGROUND = 8,
 };
 
 enum {

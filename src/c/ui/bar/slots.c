@@ -6,7 +6,6 @@
 #include "steps_bar.h"
 #include "seconds_slot.h"
 #include "seconds_bar.h"
-#include "status_bar.h"
 #include "empty_bar.h"
 #include "../../settings.h"
 
@@ -17,7 +16,6 @@ void slots_init()
     int combo_a_mask = 0;
     int combo_b_mask = 0;
     int combo_c_mask = 0;
-    int icons_mask = 0;
     int steps_mask = 0;
     int seconds_mask = 0;
     int seconds_bar_mask = 0;
@@ -44,7 +42,8 @@ void slots_init()
         switch (content)
         {
         case SLOT_CONTENT_ICONS:
-            icons_mask += bit;
+        case SLOT_CONTENT_NONE:
+            none_mask += bit;
             break;
         case SLOT_CONTENT_BATTERY:
             battery_mask += bit;
@@ -70,9 +69,6 @@ void slots_init()
         case SLOT_CONTENT_SECONDS_BAR:
             seconds_bar_mask += bit;
             break;
-        case SLOT_CONTENT_NONE:
-            none_mask += bit;
-            break;
         default:
         }
     }
@@ -84,14 +80,12 @@ void slots_init()
     steps_bar_init(steps_mask, slots_frame);
     seconds_slot_init(seconds_mask, slots_frame);
     seconds_bar_init(seconds_bar_mask, slots_frame);
-    status_bar_init(icons_mask, slots_frame);
     empty_bar_init(none_mask, slots_frame);
 }
 
 void slots_deinit()
 {
     empty_bar_deinit();
-    status_bar_deinit();
     seconds_bar_deinit();
     seconds_slot_deinit();
     steps_bar_deinit();

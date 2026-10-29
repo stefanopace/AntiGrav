@@ -122,7 +122,7 @@ static void seconds_slot_update_proc(Layer *layer, GContext *ctx)
 
     GSize seconds_size = graphics_text_layout_get_content_size_with_attributes(
         s_sec_buffer,
-        fonts_get_small_font(),
+        fonts_get_seconds_font(),
         bounds,
         GTextOverflowModeTrailingEllipsis,
         align,
@@ -164,7 +164,7 @@ static void seconds_slot_update_proc(Layer *layer, GContext *ctx)
     graphics_draw_text(
         ctx,
         s_sec_buffer,
-        fonts_get_small_font(),
+        fonts_get_seconds_font(),
         bounds,
         GTextOverflowModeTrailingEllipsis,
         align,

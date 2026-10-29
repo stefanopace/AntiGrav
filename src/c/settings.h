@@ -85,14 +85,10 @@ typedef enum
 
 typedef enum
 {
-    DATE_FORMAT_DAY_MONTH_NAME = 0,
-    DATE_FORMAT_DAY_MONTH_NUM = 1,
-    DATE_FORMAT_MONTH_DAY_NUM = 2,
-    DATE_FORMAT_DAY_MONTH_YEAR = 3,
-    DATE_FORMAT_MONTH_DAY_YEAR = 4,
-    DATE_FORMAT_YEAR_MONTH_DAY = 5,
-    DATE_FORMAT_YEAR_DAY_MONTH = 6,
-    DATE_FORMAT_DAY_NAME_MONTH_DAY = 7,
+    DATE_FORMAT_DAY_NAME_DAY = 0,
+    DATE_FORMAT_DAY_DAY_NAME = 1,
+    DATE_FORMAT_DAY_MONTH = 2,
+    DATE_FORMAT_MONTH_DAY = 3,
 } DateFormat;
 
 typedef enum
@@ -101,15 +97,6 @@ typedef enum
     DATE_SEPARATOR_DOT = 1,
     DATE_SEPARATOR_HYPHEN = 2,
 } DateSeparator;
-
-typedef enum
-{
-    GABBRO_DATE_DAY_NAME = 0,
-    GABBRO_DATE_MONTH_NAME = 1,
-    GABBRO_DATE_DAY_MONTH = 2,
-    GABBRO_DATE_MONTH_DAY = 3,
-    GABBRO_DATE_DAY = 4,
-} GabbroDateContent;
 
 typedef enum
 {
@@ -128,12 +115,9 @@ bool ag_settings_day_leading_zero_enabled();
 bool ag_settings_month_leading_zero_enabled();
 DateFormat settings_get_date_format();
 DateSeparator settings_get_date_separator();
-GabbroDateContent settings_get_gabbro_date_above();
-GabbroDateContent settings_get_gabbro_date_below();
 bool settings_advanced_colors_enabled();
 bool settings_bar_colors_enabled();
 bool settings_icon_colors_enabled();
-bool settings_invert_colors_enabled();
 int settings_language();
 BarStyle settings_get_bar_style(SlotContent content);
 bool settings_get_bar_mirrored(SlotContent content);

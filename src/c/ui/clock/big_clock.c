@@ -58,14 +58,10 @@ static GColor s_minutes_color;
 static DigitBitmapSlot s_slots[CLOCK_DIGIT_COUNT];
 static Layer *s_big_hours_layer;
 static Layer *s_big_minutes_layer;
+static GRect s_hours_base;
+static GRect s_minutes_base;
 static BitmapLayer *s_digit_layers[CLOCK_DIGIT_COUNT];
 static int s_clock_subscription = -1;
-
-#if PBL_DISPLAY_WIDTH == 260 && PBL_DISPLAY_HEIGHT == 260
-
-
-
-#endif
 
 static GRect row_frame(int16_t x, int16_t y, int16_t other_x);
 static BitmapLayer *create_digit_layer(Layer *parent, GRect frame, GAlign alignment);
@@ -88,6 +84,8 @@ void big_clock_init(Layer *hours_parent, Layer *minutes_parent)
     const GRect hours = row_frame(CLOCK_HOUR_DEC_X, CLOCK_HOUR_DEC_Y, CLOCK_HOUR_UNI_X);
     const GRect minutes = row_frame(CLOCK_MIN_DEC_X, CLOCK_MIN_DEC_Y, CLOCK_MIN_UNI_X);
 
+    s_hours_base = hours;
+    s_minutes_base = minutes;
     s_big_hours_layer = layer_create(hours);
     s_big_minutes_layer = layer_create(minutes);
     layer_add_child(hours_parent, s_big_hours_layer);
@@ -131,19 +129,14 @@ void big_clock_set_visible(bool hours, bool minutes)
     layer_set_hidden(s_big_minutes_layer, !minutes);
 }
 
-void big_clock_shift_hours(int16_t shift_x)
+void big_clock_set_offset_x(int16_t offset)
 {
-    GRect frame = row_frame(CLOCK_HOUR_DEC_X, CLOCK_HOUR_DEC_Y, CLOCK_HOUR_UNI_X);
-    frame.origin.x = (int16_t)(frame.origin.x + shift_x);
-    layer_set_frame(s_big_hours_layer, frame);
-}
-
-void big_clock_shift_minutes(int16_t shift_x, int16_t shift_y)
-{
-    GRect frame = row_frame(CLOCK_MIN_DEC_X, CLOCK_MIN_DEC_Y, CLOCK_MIN_UNI_X);
-    frame.origin.x = (int16_t)(frame.origin.x + shift_x);
-    frame.origin.y = (int16_t)(frame.origin.y + shift_y);
-    layer_set_frame(s_big_minutes_layer, frame);
+    GRect hours = s_hours_base;
+    GRect minutes = s_minutes_base;
+    hours.origin.x = (int16_t)(s_hours_base.origin.x + offset);
+    minutes.origin.x = (int16_t)(s_minutes_base.origin.x + offset);
+    layer_set_frame(s_big_hours_layer, hours);
+    layer_set_frame(s_big_minutes_layer, minutes);
 }
 
 static GRect row_frame(int16_t x, int16_t y, int16_t other_x)

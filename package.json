@@ -1,5 +1,5 @@
 {
-  "name": "antigrav",
+  "name": "antigrav-mini",
   "author": "StefanoPace",
   "version": "2.2.0",
   "license": "MIT",
@@ -11,16 +11,12 @@
     "@rebble/clay": "1.1.0"
   },
   "pebble": {
-    "displayName": "AntiGrav",
-    "uuid": "7b758a23-0125-46e8-95ac-3b5ea1c27fd6",
+    "displayName": "AntiGrav mini",
+    "uuid": "17902e33-6b2f-4e72-b422-6565ad51d88e",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
-      "basalt",
-      "diorite",
-      "emery",
-      "flint",
-      "gabbro"
+      "emery"
     ],
     "watchapp": {
       "watchface": true
@@ -39,9 +35,6 @@
       "ColorIcons",
       "ColorDate",
       "ColorBackground",
-      "ColorBarLeft",
-      "ColorBarCenter",
-      "ColorBarRight",
       "AdvancedColors",
       "HideSecondsOnQuietTime",
       "HoursLeadingZero",
@@ -61,7 +54,6 @@
       "AmPmIconEnabled",
       "BtDisconnectVibe",
       "NoVibrateOnQuietTime",
-      "FlickDisabledOnQuietTime",
       "LowBatteryThreshold",
       "LowBatteryIconEnabled",
       "Font",
@@ -89,8 +81,6 @@
       "StepGoalMirrored",
       "SecondsBarStyle",
       "SecondsBarMirrored",
-      "IconsAlignment",
-      "IconsPlaceholder",
       "SecondsAlignment",
       "SecondsPlaceholder",
       "ColorBarWatchBattery",
@@ -109,9 +99,6 @@
       "ColorIconLowBattery",
       "ColorIconPhoneLowBattery",
       "ColorIconPhoneCharging",
-      "InvertColors",
-      "GabbroDateAbove",
-      "GabbroDateBelow",
       "PinPopupLarge"
     ],
     "resources": {
@@ -124,936 +111,219 @@
         },
         {
           "type": "font",
-          "name": "FONT_REPLICANT_16",
-          "file": "fonts/replicant_16.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "emery",
-            "gabbro"
-          ]
+          "name": "FONT_REPLICANT_32",
+          "file": "fonts/replicant_32.ttf",
+          "characterRegex": "[ 0-9BDFGHJKLMOQRSTVWZa\u00e5ehilno\u00f6\u00f8rux/pqbjg.cfdy*-]"
         },
         {
           "type": "font",
-          "name": "FONT_REPLICANT_13",
-          "file": "fonts/replicant_flint_13.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "name": "FONT_RACER_32",
+          "file": "fonts/racer_32.ttf",
+          "characterRegex": "[ 0-9BDFGHJKLMOQRSTVWZa\u00e5ehilno\u00f6\u00f8rux/pqbjg.cfdy*-]"
         },
         {
           "type": "font",
-          "name": "FONT_RACER_16",
-          "file": "fonts/racer_16.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "emery",
-            "gabbro"
-          ]
+          "name": "FONT_SAMURAI_32",
+          "file": "fonts/samurai_32.ttf",
+          "characterRegex": "[ 0-9BDFGHJKLMOQRSTVWZa\u00e5ehilno\u00f6\u00f8rux/pqbjg.cfdy*-]"
         },
         {
           "type": "font",
-          "name": "FONT_RACER_13",
-          "file": "fonts/racer_flint_13.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "name": "FONT_REPLICANT_SECONDS_16",
+          "file": "fonts/replicant_seconds_16.ttf",
+          "characterRegex": "[ 0-9]"
         },
         {
           "type": "font",
-          "name": "FONT_SAMURAI_16",
-          "file": "fonts/samurai_16.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "emery",
-            "gabbro"
-          ]
+          "name": "FONT_RACER_SECONDS_16",
+          "file": "fonts/racer_seconds_16.ttf",
+          "characterRegex": "[ 0-9]"
         },
         {
           "type": "font",
-          "name": "FONT_SAMURAI_13",
-          "file": "fonts/samurai_flint_13.ttf",
-          "characterRegex": "[0-9A-Za-z/. ,_*-ÅÖØ]",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "name": "FONT_SAMURAI_SECONDS_16",
+          "file": "fonts/samurai_seconds_16.ttf",
+          "characterRegex": "[ 0-9]"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_0",
-          "file": "images/replicant_86/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_0",
-          "file": "images/replicant_75_gabbro/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_0",
-          "file": "images/replicant_66_flint/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/48.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_1",
-          "file": "images/replicant_86/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_1",
-          "file": "images/replicant_75_gabbro/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_1",
-          "file": "images/replicant_66_flint/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/49.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_2",
-          "file": "images/replicant_86/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_2",
-          "file": "images/replicant_75_gabbro/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_2",
-          "file": "images/replicant_66_flint/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/50.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_3",
-          "file": "images/replicant_86/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_3",
-          "file": "images/replicant_75_gabbro/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_3",
-          "file": "images/replicant_66_flint/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/51.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_4",
-          "file": "images/replicant_86/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_4",
-          "file": "images/replicant_75_gabbro/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_4",
-          "file": "images/replicant_66_flint/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/52.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_5",
-          "file": "images/replicant_86/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_5",
-          "file": "images/replicant_75_gabbro/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_5",
-          "file": "images/replicant_66_flint/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/53.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_6",
-          "file": "images/replicant_86/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_6",
-          "file": "images/replicant_75_gabbro/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_6",
-          "file": "images/replicant_66_flint/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/54.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_7",
-          "file": "images/replicant_86/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_7",
-          "file": "images/replicant_75_gabbro/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_7",
-          "file": "images/replicant_66_flint/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/55.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_8",
-          "file": "images/replicant_86/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_8",
-          "file": "images/replicant_75_gabbro/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_8",
-          "file": "images/replicant_66_flint/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/56.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "REPLICANT_DIGIT_9",
-          "file": "images/replicant_86/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_9",
-          "file": "images/replicant_75_gabbro/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "REPLICANT_DIGIT_9",
-          "file": "images/replicant_66_flint/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/replicant_75/57.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_0",
-          "file": "images/racer_86/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_0",
-          "file": "images/racer_75_gabbro/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_0",
-          "file": "images/racer_66_flint/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/48.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_1",
-          "file": "images/racer_86/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_1",
-          "file": "images/racer_75_gabbro/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_1",
-          "file": "images/racer_66_flint/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/49.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_2",
-          "file": "images/racer_86/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_2",
-          "file": "images/racer_75_gabbro/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_2",
-          "file": "images/racer_66_flint/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/50.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_3",
-          "file": "images/racer_86/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_3",
-          "file": "images/racer_75_gabbro/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_3",
-          "file": "images/racer_66_flint/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/51.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_4",
-          "file": "images/racer_86/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_4",
-          "file": "images/racer_75_gabbro/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_4",
-          "file": "images/racer_66_flint/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/52.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_5",
-          "file": "images/racer_86/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_5",
-          "file": "images/racer_75_gabbro/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_5",
-          "file": "images/racer_66_flint/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/53.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_6",
-          "file": "images/racer_86/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_6",
-          "file": "images/racer_75_gabbro/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_6",
-          "file": "images/racer_66_flint/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/54.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_7",
-          "file": "images/racer_86/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_7",
-          "file": "images/racer_75_gabbro/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_7",
-          "file": "images/racer_66_flint/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/55.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_8",
-          "file": "images/racer_86/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_8",
-          "file": "images/racer_75_gabbro/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_8",
-          "file": "images/racer_66_flint/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/56.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "RACER_DIGIT_9",
-          "file": "images/racer_86/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_9",
-          "file": "images/racer_75_gabbro/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "RACER_DIGIT_9",
-          "file": "images/racer_66_flint/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/racer_75/57.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_0",
-          "file": "images/samurai_86/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_0",
-          "file": "images/samurai_75_gabbro/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_0",
-          "file": "images/samurai_66_flint/48.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/48.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_1",
-          "file": "images/samurai_86/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_1",
-          "file": "images/samurai_75_gabbro/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_1",
-          "file": "images/samurai_66_flint/49.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/49.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_2",
-          "file": "images/samurai_86/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_2",
-          "file": "images/samurai_75_gabbro/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_2",
-          "file": "images/samurai_66_flint/50.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/50.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_3",
-          "file": "images/samurai_86/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_3",
-          "file": "images/samurai_75_gabbro/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_3",
-          "file": "images/samurai_66_flint/51.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/51.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_4",
-          "file": "images/samurai_86/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_4",
-          "file": "images/samurai_75_gabbro/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_4",
-          "file": "images/samurai_66_flint/52.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/52.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_5",
-          "file": "images/samurai_86/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_5",
-          "file": "images/samurai_75_gabbro/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_5",
-          "file": "images/samurai_66_flint/53.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/53.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_6",
-          "file": "images/samurai_86/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_6",
-          "file": "images/samurai_75_gabbro/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_6",
-          "file": "images/samurai_66_flint/54.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/54.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_7",
-          "file": "images/samurai_86/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_7",
-          "file": "images/samurai_75_gabbro/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_7",
-          "file": "images/samurai_66_flint/55.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/55.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_8",
-          "file": "images/samurai_86/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_8",
-          "file": "images/samurai_75_gabbro/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_8",
-          "file": "images/samurai_66_flint/56.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/56.png",
+          "memoryFormat": "1BitPalette"
         },
         {
           "type": "bitmap",
           "name": "SAMURAI_DIGIT_9",
-          "file": "images/samurai_86/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "emery"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_9",
-          "file": "images/samurai_75_gabbro/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "gabbro"
-          ]
-        },
-        {
-          "type": "bitmap",
-          "name": "SAMURAI_DIGIT_9",
-          "file": "images/samurai_66_flint/57.png",
-          "memoryFormat": "1BitPalette",
-          "targetPlatforms": [
-            "basalt",
-            "diorite",
-            "flint"
-          ]
+          "file": "images/samurai_75/57.png",
+          "memoryFormat": "1BitPalette"
         }
       ]
     }

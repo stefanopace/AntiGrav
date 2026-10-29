@@ -13,7 +13,6 @@ const font_options = [
 ];
 
 const slot_content_options = [
-  { "label": "Status icons", "value": "Icons" },
   { "label": "Watch battery bar", "value": "Battery" },
   { "label": "Phone battery bar", "value": "PhoneBattery" },
   { "label": "Step goal progress bar", "value": "Steps" },
@@ -54,9 +53,6 @@ const placeholder_options = [
 function groupedSection(group, items) {
   for (var i = 0; i < items.length; i++) {
     items[i].group = group;
-    if (group === "colors") {
-      items[i].capabilities = ["NOT_BW"];
-    }
   }
   return {
     type: "section",
@@ -158,7 +154,7 @@ function colorBarGroup(colors) {
   return items;
 }
 
-function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefault) {
+function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefault, mirrorDefault) {
   var items = [
     { "type": "heading", "id": whereId, "defaultValue": name, "size": "4" }
   ];
@@ -177,7 +173,7 @@ function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefau
       "type": "toggle",
       "messageKey": mirrorKey,
       "label": "Mirrored",
-      "defaultValue": false
+      "defaultValue": !!mirrorDefault
     }
   );
   return layoutItems(section, items);
@@ -186,7 +182,7 @@ function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefau
 module.exports = [
   {
     "type": "heading",
-    "defaultValue": "AntiGrav",
+    "defaultValue": "AntiGrav mini",
     "size": "1"
   },
 
@@ -220,35 +216,25 @@ module.exports = [
       "options": font_options
     },
     {
-      "type": "toggle",
-      "messageKey": "InvertColors",
-      "label": "Invert colors",
-      "defaultValue": false,
-      "capabilities": ["BW"]
-    },
-    {
       "type": "color",
       "sunlight": false,
       "messageKey": "ColorPrimary",
       "label": "Background Color",
-      "defaultValue": "000000",
-      "capabilities": ["NOT_BW"]
+      "defaultValue": "000000"
     },
     {
       "type": "color",
       "sunlight": false,
       "messageKey": "ColorSecondary",
       "label": "Text Color",
-      "defaultValue": "FFFFFF",
-      "capabilities": ["NOT_BW"]
+      "defaultValue": "FFFFFF"
     },
     {
       "type": "color",
       "sunlight": false,
       "messageKey": "ColorAccent",
       "label": "Bar color",
-      "defaultValue": "00FFAA",
-      "capabilities": ["NOT_BW"]
+      "defaultValue": "00FFAA"
     }
   ]),
 
@@ -282,45 +268,12 @@ module.exports = [
       "type": "select",
       "messageKey": "DateFormat",
       "label": "Format",
-      "defaultValue": "DayMonthName",
-      "capabilities": ["NOT_DISPLAY_260x260_ROUND"],
+      "defaultValue": "DayNameDay",
       "options": [
-        { "label": "FRI 31 DEC", "value": "DayMonthName" },
-        { "label": "FRI 31/12", "value": "DayMonthNum" },
-        { "label": "FRI 12/31", "value": "MonthDayNum" },
-        { "label": "FRI, DEC 31", "value": "DayNameMonthDay" },
-        { "label": "31/12/2083", "value": "DayMonthYear" },
-        { "label": "12/31/2083", "value": "MonthDayYear" },
-        { "label": "2083/12/31", "value": "YearMonthDay" },
-        { "label": "2083/31/12", "value": "YearDayMonth" }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "GabbroDateAbove",
-      "label": "Above the hours",
-      "defaultValue": "Day",
-      "capabilities": ["DISPLAY_260x260_ROUND"],
-      "options": [
-        { "label": "Day name", "value": "DayName" },
-        { "label": "Month name", "value": "MonthName" },
-        { "label": "dd/mm", "value": "DayMonth" },
-        { "label": "mm/dd", "value": "MonthDay" },
-        { "label": "Day", "value": "Day" }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "GabbroDateBelow",
-      "label": "Below the minutes",
-      "defaultValue": "MonthName",
-      "capabilities": ["DISPLAY_260x260_ROUND"],
-      "options": [
-        { "label": "Day name", "value": "DayName" },
-        { "label": "Month name", "value": "MonthName" },
-        { "label": "dd/mm", "value": "DayMonth" },
-        { "label": "mm/dd", "value": "MonthDay" },
-        { "label": "Day", "value": "Day" }
+        { "label": "Fr 31", "value": "DayNameDay" },
+        { "label": "31 Fr", "value": "DayDayName" },
+        { "label": "31/12", "value": "DayMonth" },
+        { "label": "12/31", "value": "MonthDay" }
       ]
     },
     {
@@ -369,19 +322,7 @@ module.exports = [
       "type": "select",
       "messageKey": "PinPopupLarge",
       "label": "Keep large during a pin",
-      "defaultValue": "Hours",
-      "capabilities": ["DISPLAY_260x260_ROUND"],
-      "options": [
-        { "label": "Minutes", "value": "Minutes" },
-        { "label": "Hours", "value": "Hours" }
-      ]
-    },
-    {
-      "type": "select",
-      "messageKey": "PinPopupLarge",
-      "label": "Keep large during a pin",
       "defaultValue": "Minutes",
-      "capabilities": ["NOT_DISPLAY_260x260_ROUND"],
       "options": [
         { "label": "Minutes", "value": "Minutes" },
         { "label": "Hours", "value": "Hours" }
@@ -418,15 +359,14 @@ module.exports = [
       "type": "note",
       "defaultValue": "ⓘ Slots with the same content are merged"
     },
-    slotContent("Left", "SlotLeft", "Icons"),
+    slotContent("Left", "SlotLeft", "Battery"),
     slotContent("Center", "SlotCenter", "Battery"),
-    slotContent("Right", "SlotRight", "Seconds")
+    slotContent("Right", "SlotRight", "SecondsBar")
   ].concat(comboContents("combo-a", "Split A", "ComboBarTop", "ComboBarBottom", "WatchBattery", "PhoneBattery"))
     .concat(comboContents("combo-b", "Split B", "ComboBTop", "ComboBBottom", "Seconds", "StepGoal"))
     .concat(comboContents("combo-c", "Split C", "ComboCTop", "ComboCBottom", "WatchBattery", "Seconds"))),
-  groupedSection("slots", textSource("source-icons", "source-icons-where", "Status icons", "IconsAlignment", "IconsPlaceholder", "ⓘ See the Status Icons tab")),
   groupedSection("slots", textSource("source-seconds", "source-seconds-where", "Seconds", "SecondsAlignment", "SecondsPlaceholder", "ⓘ See the Behaviors tab")),
-  groupedSection("slots", barSource("source-watch", "source-watch-where", "Watch battery", "BatteryStyle", "WatchBatteryMirrored")),
+  groupedSection("slots", barSource("source-watch", "source-watch-where", "Watch battery", "BatteryStyle", "WatchBatteryMirrored", null, "Continuous", true)),
   groupedSection("slots", barSource("source-phone", "source-phone-where", "Phone battery", "PhoneBatteryStyle", "PhoneBatteryMirrored", "⚠︎ May not work on some devices", "Continuous")),
   groupedSection("slots", barSource("source-steps", "source-steps-where", "Step goal progress bar", "StepsStyle", "StepGoalMirrored", "ⓘ Set the goal in Behaviors", "Continuous")),
   groupedSection("slots", barSource("source-seconds-bar", "source-seconds-bar-where", "Seconds bar", "SecondsBarStyle", "SecondsBarMirrored", "ⓘ See the Behaviors tab")),
@@ -486,7 +426,7 @@ module.exports = [
       "messageKey": "ShowSecondsOnTapCount",
       "label": "Reveal on flick",
       "description": "ⓘ Hides the seconds until you flick the watch the selected number of times. Off keeps them visible.",
-      "defaultValue": "1",
+      "defaultValue": "0",
       "options": flick_count_options
     },
     {

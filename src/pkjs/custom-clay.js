@@ -14,7 +14,6 @@ module.exports = function() {
   ];
 
   var SOURCES = [
-    { section: "source-icons", whereId: "source-icons-where", slots: ["Icons"], combos: [] },
     { section: "source-seconds", whereId: "source-seconds-where", slots: ["Seconds"], combos: [] },
     { section: "source-watch", whereId: "source-watch-where", slots: ["Battery"], combos: ["WatchBattery"] },
     { section: "source-phone", whereId: "source-phone-where", slots: ["PhoneBattery"], combos: ["PhoneBattery"] },
@@ -162,6 +161,7 @@ module.exports = function() {
 
   function syncColorVisibility() {
     var active = activeSections();
+    active["source-icons"] = true;
     if (emptyIsUsed()) {
       active["source-empty"] = true;
     }

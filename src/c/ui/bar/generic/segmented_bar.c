@@ -5,6 +5,7 @@
 
 static int segments_for_floor(int value, int scale, int total_dots);
 static int segments_for_ceil(int value, int scale, int total_dots);
+static int segment_width(int index, char slot_mask);
 
 void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, char slot_mask, int bar_type, bool available, int bar_y, int bar_h, int empty_h, bool mirrored, GColor color)
 {
@@ -20,7 +21,7 @@ void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, cha
         draw_y = bar_y + ((bar_h - dots_h) / 2);
     }
 
-    int total_dots = 5;
+    int total_dots = 3;
     bool jump = false;
     bool starts_left_border = false;
     bool ends_right_border = false;
@@ -37,7 +38,7 @@ void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, cha
         break;
     case 3:
         x = BAR2_X;
-        total_dots = 10;
+        total_dots = 6;
         ends_right_border = true;
         break;
     case 4:
@@ -45,16 +46,16 @@ void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, cha
         break;
     case 5:
         jump = true;
-        total_dots = 10;
+        total_dots = 6;
         starts_left_border = true;
         ends_right_border = true;
         break;
     case 6:
-        total_dots = 10;
+        total_dots = 6;
         starts_left_border = true;
         break;
     case 7:
-        total_dots = 15;
+        total_dots = 9;
         starts_left_border = true;
         ends_right_border = true;
         break;
@@ -76,6 +77,8 @@ void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, cha
 
     for (int i = 0; i < total_dots; i++)
     {
+        const int width = segment_width(i, slot_mask);
+
         if ((!mirrored && i < active_dots) || (mirrored && i >= (total_dots - active_dots)))
         {
             GCornerMask corners = GCornerNone;
@@ -88,65 +91,60 @@ void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, cha
             {
                 corners = GCornersRight;
             }
-#if PBL_DISPLAY_WIDTH == 144 && PBL_DISPLAY_HEIGHT == 168
-            if (total_dots == 5 && (i == 0 || i == 4))
-            {
-                graphics_fill_rect(ctx, GRect(x, draw_y, DOTS_W + 1, dots_h), BAR_CORNER_RADIUS, corners);
-            }
-            else if (total_dots == 10 && (i == 0 || i == 1 || i == 8 || i == 9))
-            {
-                graphics_fill_rect(ctx, GRect(x, draw_y, DOTS_W + 1, dots_h), BAR_CORNER_RADIUS, corners);
-            }
-            else if (total_dots == 15 && (i == 0 || i == 1 || i == 2 || i == 12 || i == 13 || i == 14))
-            {
-                graphics_fill_rect(ctx, GRect(x, draw_y, DOTS_W + 1, dots_h), BAR_CORNER_RADIUS, corners);
-            }
-            else
-            {
-                graphics_fill_rect(ctx, GRect(x, draw_y, DOTS_W, dots_h), BAR_CORNER_RADIUS, corners);
-            }
-#else
-            graphics_fill_rect(ctx, GRect(x, draw_y, DOTS_W, dots_h), BAR_CORNER_RADIUS, corners);
-#endif
+            graphics_fill_rect(ctx, GRect(x, draw_y, width, dots_h), BAR_CORNER_RADIUS, corners);
         }
         else
         {
             graphics_fill_rect(
                 ctx,
-                GRect(x + EMPTY_DOTS_GAP_W, empty_dots_y, EMPTY_DOTS_W, empty_h),
+                GRect(x + (width - EMPTY_DOTS_W) / 2, empty_dots_y, EMPTY_DOTS_W, empty_h),
                 0,
                 GCornerNone);
         }
 
-        if (i == 4 && jump)
+        if (i == 2 && jump)
         {
             x = BAR3_X;
         }
         else
         {
-            #if PBL_DISPLAY_WIDTH == 144 && PBL_DISPLAY_HEIGHT == 168
-            if (total_dots == 5 && (i == 0 || i == 4))
-            {
-                x += DOTS_W + 1 + DOTS_GAP;
-            }
-            else if (total_dots == 10 && (i == 0 || i == 1 || i == 8 || i == 9))
-            {
-                x += DOTS_W + 1 + DOTS_GAP;
-            }
-            else if (total_dots == 15 && (i == 0 || i == 1 || i == 2 || i == 12 || i == 13 || i == 14))
-            {
-                x += DOTS_W + 1 + DOTS_GAP;
-            }
-            else
-            {
-                x += DOTS_W + DOTS_GAP;
-            }
-#else
-            x += DOTS_W + DOTS_GAP;
-#endif
-            
+            x += width + DOTS_GAP;
         }
     }
+}
+
+static int segment_width(int index, char slot_mask)
+{
+    bool wide = false;
+
+    switch (slot_mask)
+    {
+    case 1:
+        wide = index == 2;
+        break;
+    case 2:
+        wide = index == 1;
+        break;
+    case 3:
+        wide = index == 1 || index == 5;
+        break;
+    case 4:
+        wide = index == 0;
+        break;
+    case 5:
+        wide = index == 0 || index == 5;
+        break;
+    case 6:
+        wide = index == 0 || index == 4;
+        break;
+    case 7:
+        wide = index == 0 || index == 4 || index == 8;
+        break;
+    default:
+        break;
+    }
+
+    return wide ? DOTS_W + 1 : DOTS_W;
 }
 
 static int segments_for_floor(int value, int scale, int total_dots)
