@@ -60,9 +60,16 @@ module.exports = {
     options: [],
     defaultValue: ''
   },
-  initialize: function() {
+  initialize: function(minified, clayConfig) {
     var root = this.$element[0].querySelector('.tabs-bar');
     var options = this.config.options || [];
+    var info = clayConfig && clayConfig.meta && clayConfig.meta.activeWatchInfo;
+    var platform = info && info.platform;
+    if (platform === 'aplite' || platform === 'diorite' || platform === 'flint') {
+      options = options.filter(function(option) {
+        return option.value !== 'colors';
+      });
+    }
     var self = this;
     for (var i = 0; i < options.length; i++) {
       var option = options[i];

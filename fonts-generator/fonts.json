@@ -1,12 +1,28 @@
 {
     "fonts": [
         {
-            "name": "dummy1",
-            "order": "012"
+            "name": "replicant",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
         },
         {
-            "name": "dummy2",
-            "order": "345"
+            "name": "racer",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+        },
+        {
+            "name": "samurai",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+        },
+        {
+            "name": "replicant_flint",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+        },
+        {
+            "name": "racer_flint",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
+        },
+        {
+            "name": "samurai_flint",
+            "order": " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/pqblg-.cf,_*ØÖÅde"
         }
     ]
 }

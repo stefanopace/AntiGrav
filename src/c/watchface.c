@@ -1,8 +1,14 @@
 #include <pebble.h>
 #include "models/message.h"
 #include "models/unobstructed.h"
+#include "ui/bluetooth_vibrator.h"
+#include "ui/bar/slots.h"
+#include "ui/fonts.h"
 #include "settings.h"
+#include "ui/clock/clock_section.h"
+#include "ui/date/date_section.h"
 #include "models/phone_battery.h"
+#include "ui/colors.h"
 
 static Window *s_main_window;
 
@@ -41,7 +47,12 @@ static void main_window_load(Window *window)
   ag_phone_battery_init();
   ag_unobstructed_init(window);
 
-  // insert your code here
+  colors_init(window);
+  fonts_init();
+  bluetooth_vibrator_init();
+  clock_section_init();
+  date_section_init();
+  slots_init();
 
   ag_phone_battery_request();
 }
@@ -49,6 +60,12 @@ static void main_window_load(Window *window)
 static void main_window_unload(Window *window)
 {
   (void)window;
+
+  slots_deinit();
+  bluetooth_vibrator_deinit();
+  date_section_deinit();
+  clock_section_deinit();
+  fonts_deinit();
 
   ag_unobstructed_deinit();
   ag_phone_battery_deinit();

@@ -1,0 +1,220 @@
+#pragma once
+
+#if PBL_DISPLAY_WIDTH == 144 && PBL_DISPLAY_HEIGHT == 168
+
+#define DIGIT_WIDTH 68
+#define DIGIT_HEIGHT 65
+#define CLOCK_HOUR_DEC_X 2
+#define CLOCK_HOUR_DEC_Y 2
+#define CLOCK_HOUR_UNI_X 74
+#define CLOCK_HOUR_UNI_Y 2
+#define CLOCK_MIN_DEC_X 2
+#define CLOCK_MIN_DEC_Y 71
+#define CLOCK_MIN_UNI_X 74
+#define CLOCK_MIN_UNI_Y 71
+#define CLOCK_AM_PM_X 5
+#define CLOCK_AM_PM_Y 5
+#define CLOCK_AM_PM_W 12
+#define CLOCK_AM_PM_H 13
+#define CLOCK_COMPACT_BIG_GAP 4
+
+#define DATE_Y 153
+#define DATE_H 13
+
+#define DATE_LEFT_X 2
+#define DATE_RIGHT_MARGIN 0
+#define DATE_DISPLAY_W 144
+
+#define CLOCK_COMPACT_HOUR_Y (CLOCK_MIN_UNI_Y - DATE_H - CLOCK_COMPACT_BIG_GAP)
+#define CLOCK_COMPACT_MINUTE_Y (CLOCK_MIN_UNI_Y + DIGIT_HEIGHT - DATE_H)
+
+#define SLOTS_X 2
+#define SLOTS_2DX 47
+#define SLOTS_3DX 94
+#define SLOTS_Y 138
+#define SLOTS_H 13
+#define SLOTS_W 140
+#define SLOTS_SINGLE_W 46
+#define SLOTS_GAP 1
+#define SLOT_TEXT_WIDTH_EXTRA 2
+
+#define BAR_Y 3
+#define BAR_H 7
+#define BAR_CORNER_RADIUS 1
+#define BAR1_X 0
+#define BAR2_X 47
+#define BAR3_X 94
+#define BAR_W 46
+#define BAR_GAP 1
+
+#define DOTS_W 8
+#define DOTS_GAP 1
+#define EMPTY_DOTS_W 3
+#define SEGMENTED_BAR_EMPTY_H 3
+
+#define COMBO_BAR_HALF_H 3
+#define COMBO_BAR_GAP 1
+
+#define FILL_GAP 2
+#define CONTINUOUS_UNAVAILABLE_SHRINK 2
+#define CONTINUOUS_UNAVAILABLE_Y_NUDGE 1
+
+#define PLACEHOLDER_ICON_GAP 2
+#define PLACEHOLDER_SECONDS_GAP 2
+#define TEXT_BG_TRIM 2
+
+#define EMPTY_DOTS_GAP_W ((DOTS_W - EMPTY_DOTS_W) / 2) + 1
+
+#define CONTINUOUS_UNAVAILABLE_H 3
+#define CONTINUOUS_UNAVAILABLE_Y (BAR_Y + 2)
+
+#elif PBL_DISPLAY_WIDTH == 260 && PBL_DISPLAY_HEIGHT == 260
+
+#define DIGIT_WIDTH 80
+#define DIGIT_HEIGHT 75
+#define CLOCK_HOUR_DEC_X 46
+#define CLOCK_HOUR_DEC_Y 40
+#define CLOCK_HOUR_UNI_X 134
+#define CLOCK_HOUR_UNI_Y 40
+#define CLOCK_MIN_DEC_X 46
+#define CLOCK_MIN_DEC_Y 145
+#define CLOCK_MIN_UNI_X 134
+#define CLOCK_MIN_UNI_Y 145
+#define CLOCK_AM_PM_X 22
+#define CLOCK_AM_PM_Y 99
+#define CLOCK_AM_PM_W 16
+#define CLOCK_AM_PM_H 16
+#define CLOCK_COMPACT_HOUR_X 221
+#define CLOCK_COMPACT_HOUR_Y 99
+#define CLOCK_COMPACT_MINUTE_Y CLOCK_COMPACT_HOUR_Y
+#define CLOCK_COMPACT_HOUR_W 49
+#define CLOCK_COMPACT_HOUR_H 16
+
+#define DATE_Y 218
+#define DATE_H 16
+#define DATE_ABOVE_Y 12
+#define DATE_BELOW_Y 232
+#define DATE_LEFT_X 56
+#define DATE_RIGHT_MARGIN 56
+#define DATE_DISPLAY_W 260
+
+#define SLOTS_X 4
+#define SLOTS_2DX 85
+#define SLOTS_3DX 170
+#define SLOTS_Y 122
+#define SLOTS_H 16
+#define SLOTS_W 252
+#define SLOTS_SINGLE_W 82
+#define SLOTS_GAP 3
+#define SLOT_TEXT_WIDTH_EXTRA 2
+
+#define BAR_Y 1
+#define BAR_H 14
+#define BAR_CORNER_RADIUS 2
+#define BAR1_X 0
+#define BAR2_X 85
+#define BAR3_X 170
+#define BAR_W 82
+#define BAR_GAP 3
+
+#define DOTS_W 14
+#define DOTS_GAP 3
+#define EMPTY_DOTS_W 4
+#define SEGMENTED_BAR_EMPTY_H 4
+
+#define COMBO_BAR_HALF_H 5
+#define COMBO_BAR_GAP 4
+
+#define FILL_GAP 3
+
+#define PLACEHOLDER_ICON_GAP 4
+#define PLACEHOLDER_SECONDS_GAP 4
+#define TEXT_BG_TRIM 2
+
+#define EMPTY_DOTS_GAP_W ((DOTS_W - EMPTY_DOTS_W) / 2)
+
+#define CONTINUOUS_UNAVAILABLE_H 4
+#define CONTINUOUS_UNAVAILABLE_Y (BAR_Y + 5)
+
+#else
+
+#define DIGIT_WIDTH 92
+#define DIGIT_HEIGHT 86
+#define CLOCK_HOUR_DEC_X 4
+#define CLOCK_HOUR_DEC_Y 4
+#define CLOCK_HOUR_UNI_X 104
+#define CLOCK_HOUR_UNI_Y 4
+#define CLOCK_MIN_DEC_X 4
+#define CLOCK_MIN_DEC_Y 97
+#define CLOCK_MIN_UNI_X 104
+#define CLOCK_MIN_UNI_Y 97
+#define CLOCK_AM_PM_X 7
+#define CLOCK_AM_PM_Y 7
+#define CLOCK_AM_PM_W 16
+#define CLOCK_AM_PM_H 16
+#define CLOCK_COMPACT_BIG_GAP 12
+
+#define DATE_Y 208
+#define DATE_H 16
+#define DATE_LEFT_X 4
+#define DATE_RIGHT_MARGIN 2
+#define DATE_DISPLAY_W 200
+
+#define CLOCK_COMPACT_HOUR_Y (CLOCK_MIN_UNI_Y - DATE_H - CLOCK_COMPACT_BIG_GAP)
+#define CLOCK_COMPACT_MINUTE_Y (CLOCK_MIN_UNI_Y + DIGIT_HEIGHT - DATE_H - 6)
+
+#define SLOTS_X 4
+#define SLOTS_2DX 65
+#define SLOTS_3DX 130
+#define SLOTS_Y 188
+#define SLOTS_H 16
+#define SLOTS_W 196
+#define SLOTS_SINGLE_W 62
+#define SLOTS_GAP 3
+#define SLOT_TEXT_WIDTH_EXTRA 2
+
+#define BAR_Y 3
+#define BAR_H 9
+#define BAR_CORNER_RADIUS 1
+#define BAR1_X 0
+#define BAR2_X 65
+#define BAR3_X 130
+#define BAR_W 62
+#define BAR_GAP 3
+
+#define DOTS_W 10
+#define DOTS_GAP 3
+#define EMPTY_DOTS_W 3
+#define SEGMENTED_BAR_EMPTY_H 3
+
+#define COMBO_BAR_HALF_H 3
+#define COMBO_BAR_GAP 3
+
+#define FILL_GAP 2
+#define CONTINUOUS_UNAVAILABLE_SHRINK 2
+#define CONTINUOUS_UNAVAILABLE_Y_NUDGE 1
+
+#define PLACEHOLDER_ICON_GAP 4
+#define PLACEHOLDER_SECONDS_GAP 4
+#define TEXT_BG_TRIM 2
+
+#define EMPTY_DOTS_GAP_W ((DOTS_W - EMPTY_DOTS_W) / 2)
+
+#define CONTINUOUS_UNAVAILABLE_H 3
+#define CONTINUOUS_UNAVAILABLE_Y (BAR_Y + 3)
+
+#endif
+
+#define FILL_H (BAR_H - (2 * FILL_GAP))
+
+#ifndef CLOCK_COMPACT_HOUR_H
+#define CLOCK_COMPACT_HOUR_H DATE_H
+#endif
+#ifndef CLOCK_COMPACT_HOUR_X
+#define CLOCK_COMPACT_HOUR_X CLOCK_HOUR_DEC_X
+#endif
+#ifndef CLOCK_COMPACT_HOUR_W
+#define CLOCK_COMPACT_HOUR_W (DATE_DISPLAY_W - DATE_LEFT_X - DATE_RIGHT_MARGIN)
+#endif
+
+Layer *layout_parent_layer();

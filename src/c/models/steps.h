@@ -4,7 +4,7 @@
 typedef struct StepsState
 {
     int steps_amount;
-    int goal_percent;
+    int steps_goal;
     bool goal_reached;
 } StepsState;
 

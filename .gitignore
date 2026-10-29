@@ -5,3 +5,4 @@ __pycache__/
 .cursor/
 /scripts/install.sh
 /scripts/emu.sh
+/screenshots
