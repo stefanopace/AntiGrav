@@ -1,0 +1,12 @@
+{
+    "fonts": [
+        {
+            "name": "dummy1",
+            "order": "012"
+        },
+        {
+            "name": "dummy2",
+            "order": "345"
+        }
+    ]
+}

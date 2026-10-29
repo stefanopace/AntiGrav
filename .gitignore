@@ -1,0 +1,7 @@
+**/node_modules
+__pycache__/
+/build/
+.lock-waf_linux_build
+.cursor/
+/scripts/install.sh
+/scripts/emu.sh

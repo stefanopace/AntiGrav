@@ -1,0 +1,53 @@
+{
+  "name": "antigrav-framework",
+  "author": "StefanoPace",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "pebble-watchface"
+  ],
+  "private": true,
+  "dependencies": {
+    "@rebble/clay": "1.1.0"
+  },
+  "pebble": {
+    "displayName": "AntiGrav Framework",
+    "uuid": "bc59361a-b997-464e-9a96-61e5de865e72",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "basalt",
+      "diorite",
+      "emery",
+      "flint",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "capabilities": [
+      "configurable",
+      "health"
+    ],
+    "messageKeys": [
+      "HideSecondsOnQuietTime",
+      "HoursLeadingZero",
+      "MinutesLeadingZero",
+      "SecondsLeadingZero",
+      "DayLeadingZero",
+      "MonthLeadingZero",
+      "ShowOnTapDuration",
+      "ShowSecondsOnTapCount",
+      "HideSecondsOnLowBattery",
+      "LowBatteryThreshold",
+      "StepGoal",
+      "PhoneBattery",
+      "PhoneBatteryCharging",
+      "PhoneBatteryRequest",
+      "PhoneLowBatteryThreshold"
+    ],
+    "resources": {
+      "media": []
+    }
+  }
+}
