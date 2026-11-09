@@ -16,12 +16,13 @@ static int s_steps_subscription = -1;
 
 static void steps_slot_update_proc(Layer *layer, GContext *ctx);
 static void update_steps(const StepsState *state);
+static void steps_bar_mask_change(char bits, bool include);
 
 void steps_bar_init(char slot_mask, GRect frame)
 {
     s_layer = NULL;
     s_steps_subscription = -1;
-    if (slot_mask == 0)
+    if (slot_mask == 0 && !settings_placeholder_is_selected(SLOT_PLACEHOLDER_STEPS))
     {
         return;
     }
@@ -44,6 +45,32 @@ void steps_bar_deinit(void)
         layer_destroy(s_layer);
         s_layer = NULL;
     }
+}
+
+void steps_bar_mask_include(char bits)
+{
+    steps_bar_mask_change(bits, true);
+}
+
+void steps_bar_mask_exclude(char bits)
+{
+    steps_bar_mask_change(bits, false);
+}
+
+static void steps_bar_mask_change(char bits, bool include)
+{
+    if (!s_layer)
+    {
+        return;
+    }
+
+    char next = include ? (char)(s_slot_mask | bits) : (char)(s_slot_mask & ~bits);
+    if (next == s_slot_mask)
+    {
+        return;
+    }
+    s_slot_mask = next;
+    layer_mark_dirty(s_layer);
 }
 
 static void steps_slot_update_proc(Layer *layer, GContext *ctx)

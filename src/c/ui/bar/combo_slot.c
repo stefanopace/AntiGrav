@@ -26,7 +26,9 @@ static int s_steps_subscription = -1;
 static int s_seconds_subscription = -1;
 
 static void combo_slot_update_proc(Layer *layer, GContext *ctx);
+static bool combo_slot_kept(ComboBarId combo);
 static bool combo_slot_uses(SlotContent content);
+static void combo_slot_mask_change(ComboBarId combo, char bits, bool include);
 static void update_watch_percent(const BatteryState *state);
 static void update_phone_percent(const PhoneBatteryState *state);
 static void update_steps(const StepsState *state);
@@ -43,7 +45,7 @@ void combo_slot_init(char mask_a, char mask_b, char mask_c, GRect frame)
     s_masks[COMBO_BAR_A] = mask_a;
     s_masks[COMBO_BAR_B] = mask_b;
     s_masks[COMBO_BAR_C] = mask_c;
-    if (mask_a == 0 && mask_b == 0 && mask_c == 0)
+    if (!combo_slot_kept(COMBO_BAR_A) && !combo_slot_kept(COMBO_BAR_B) && !combo_slot_kept(COMBO_BAR_C))
     {
         return;
     }
@@ -90,6 +92,32 @@ void combo_slot_deinit(void)
     }
 }
 
+void combo_slot_mask_include(ComboBarId combo, char bits)
+{
+    combo_slot_mask_change(combo, bits, true);
+}
+
+void combo_slot_mask_exclude(ComboBarId combo, char bits)
+{
+    combo_slot_mask_change(combo, bits, false);
+}
+
+static void combo_slot_mask_change(ComboBarId combo, char bits, bool include)
+{
+    if (!s_layer || combo >= COMBO_BAR_COUNT)
+    {
+        return;
+    }
+
+    char next = include ? (char)(s_masks[combo] | bits) : (char)(s_masks[combo] & ~bits);
+    if (next == s_masks[combo])
+    {
+        return;
+    }
+    s_masks[combo] = next;
+    layer_mark_dirty(s_layer);
+}
+
 static void combo_slot_update_proc(Layer *layer, GContext *ctx)
 {
     int top_value = 0;
@@ -119,11 +147,29 @@ static void combo_slot_update_proc(Layer *layer, GContext *ctx)
     }
 }
 
+static SlotPlaceholder combo_placeholder(ComboBarId combo)
+{
+    switch (combo)
+    {
+    case COMBO_BAR_B:
+        return SLOT_PLACEHOLDER_COMBO_B;
+    case COMBO_BAR_C:
+        return SLOT_PLACEHOLDER_COMBO_C;
+    default:
+        return SLOT_PLACEHOLDER_COMBO_A;
+    }
+}
+
+static bool combo_slot_kept(ComboBarId combo)
+{
+    return s_masks[combo] != 0 || settings_placeholder_is_selected(combo_placeholder(combo));
+}
+
 static bool combo_slot_uses(SlotContent content)
 {
     for (int combo = 0; combo < COMBO_BAR_COUNT; combo++)
     {
-        if (s_masks[combo] == 0)
+        if (!combo_slot_kept(combo))
         {
             continue;
         }

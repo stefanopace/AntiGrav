@@ -99,7 +99,8 @@
       "ColorIconLowBattery",
       "ColorIconPhoneLowBattery",
       "ColorIconPhoneCharging",
-      "PinPopupLarge"
+      "PinPopupLarge",
+      "SecondsBarPlaceholder"
     ],
     "resources": {
       "media": [

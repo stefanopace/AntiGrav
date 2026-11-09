@@ -16,12 +16,13 @@ static int s_phone_battery_subscription = -1;
 
 static void phone_battery_slot_update_proc(Layer *layer, GContext *ctx);
 static void update_percent(const PhoneBatteryState *state);
+static void phone_battery_bar_mask_change(char bits, bool include);
 
 void phone_battery_bar_init(char slot_mask, GRect frame)
 {
     s_layer = NULL;
     s_phone_battery_subscription = -1;
-    if (slot_mask == 0)
+    if (slot_mask == 0 && !settings_placeholder_is_selected(SLOT_PLACEHOLDER_PHONE_BATTERY))
     {
         return;
     }
@@ -44,6 +45,32 @@ void phone_battery_bar_deinit(void)
         layer_destroy(s_layer);
         s_layer = NULL;
     }
+}
+
+void phone_battery_bar_mask_include(char bits)
+{
+    phone_battery_bar_mask_change(bits, true);
+}
+
+void phone_battery_bar_mask_exclude(char bits)
+{
+    phone_battery_bar_mask_change(bits, false);
+}
+
+static void phone_battery_bar_mask_change(char bits, bool include)
+{
+    if (!s_layer)
+    {
+        return;
+    }
+
+    char next = include ? (char)(s_slot_mask | bits) : (char)(s_slot_mask & ~bits);
+    if (next == s_slot_mask)
+    {
+        return;
+    }
+    s_slot_mask = next;
+    layer_mark_dirty(s_layer);
 }
 
 static void phone_battery_slot_update_proc(Layer *layer, GContext *ctx)

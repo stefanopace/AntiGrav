@@ -65,6 +65,12 @@ typedef enum
     SLOT_PLACEHOLDER_THICK = 0,
     SLOT_PLACEHOLDER_NONE = 1,
     SLOT_PLACEHOLDER_THIN = 2,
+    SLOT_PLACEHOLDER_BATTERY = 3,
+    SLOT_PLACEHOLDER_PHONE_BATTERY = 4,
+    SLOT_PLACEHOLDER_STEPS = 5,
+    SLOT_PLACEHOLDER_COMBO_A = 6,
+    SLOT_PLACEHOLDER_COMBO_B = 7,
+    SLOT_PLACEHOLDER_COMBO_C = 8,
 } SlotPlaceholder;
 
 typedef enum
@@ -123,6 +129,8 @@ BarStyle settings_get_bar_style(SlotContent content);
 bool settings_get_bar_mirrored(SlotContent content);
 SlotAlignment settings_get_text_alignment(SlotContent content);
 SlotPlaceholder settings_get_text_placeholder(SlotContent content);
+bool settings_placeholder_is_source(SlotPlaceholder placeholder);
+bool settings_placeholder_is_selected(SlotPlaceholder placeholder);
 int ag_settings_get_seconds_show_on_tap_duration();
 bool settings_bt_icon_enabled();
 bool settings_quiet_time_icon_enabled();
