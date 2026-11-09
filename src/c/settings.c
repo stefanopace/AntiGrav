@@ -17,7 +17,8 @@ enum
     SETTINGS_VERSION_FONT_ID = 2,
     SETTINGS_VERSION_SECONDS_VISIBILITY = 3,
     SETTINGS_VERSION_COMBO_CONTENT = 4,
-    SETTINGS_VERSION_CURRENT = SETTINGS_VERSION_COMBO_CONTENT,
+    SETTINGS_VERSION_REVEAL_OFF = 5,
+    SETTINGS_VERSION_CURRENT = SETTINGS_VERSION_REVEAL_OFF,
 };
 
 typedef struct ClaySettings
@@ -91,6 +92,8 @@ typedef struct ClaySettings
     GabbroDateContent ui_gabbro_date_below;
     PinPopupLarge ui_pin_popup_large;
     SlotPlaceholder ui_seconds_bar_placeholder;
+    int model_hide_seconds_tap_count;
+    bool model_seconds_start_active;
 } ClaySettings;
 
 _Static_assert(sizeof(ClaySettings) <= PERSIST_DATA_MAX_LENGTH, "ClaySettings exceeds persist limit");
@@ -140,7 +143,7 @@ static const SettingName s_language_names[] = {
 };
 
 static const SettingName s_tap_duration_names[] = {
-    {"Disabled", 0},
+    {"Infinite", 0},
     {"5", 5},
     {"10", 10},
     {"30", 30},
@@ -263,6 +266,7 @@ static int settings_version(void);
 static void migrate_persisted_font(int version);
 static void migrate_seconds_visibility(int version);
 static void migrate_combo_contents(int version);
+static void migrate_reveal_off(int version);
 static void settings_save(void);
 static void apply_message(DictionaryIterator *iter);
 static void settings_update(DictionaryIterator *iter);
@@ -456,7 +460,17 @@ SlotContent settings_get_combo_bar_bottom(ComboBarId combo)
 
 int ag_settings_get_seconds_show_on_tap_duration()
 {
-    return settings.model_seconds_show_on_tap_duration;
+    return settings.model_seconds_show_on_tap_duration + 1;
+}
+
+bool ag_settings_seconds_infinite()
+{
+    return settings.model_seconds_show_on_tap_duration == 0;
+}
+
+bool ag_settings_seconds_start_active()
+{
+    return settings.model_seconds_start_active;
 }
 
 bool settings_bt_icon_enabled()
@@ -550,7 +564,17 @@ SlotContent settings_get_slot_content(SlotId slot)
 
 int ag_settings_get_show_seconds_tap_count()
 {
-    return settings.model_show_seconds_tap_count;
+    int count = settings.model_show_seconds_tap_count;
+    if (count < 1 || count > 4)
+    {
+        return 1;
+    }
+    return count;
+}
+
+int ag_settings_get_hide_seconds_tap_count()
+{
+    return settings.model_hide_seconds_tap_count;
 }
 
 void ag_settings_init(void (*reset)(void))
@@ -569,6 +593,7 @@ void ag_settings_init(void (*reset)(void))
                 migrate_persisted_font(version);
                 migrate_seconds_visibility(version);
                 migrate_combo_contents(version);
+                migrate_reveal_off(version);
                 settings_save();
             }
         }
@@ -678,6 +703,8 @@ static void default_settings(void)
     settings.ui_combo_c_bottom = SLOT_CONTENT_SECONDS;
     settings.model_hide_seconds_on_low_battery = false;
     settings.model_show_seconds_tap_count = 1;
+    settings.model_hide_seconds_tap_count = 0;
+    settings.model_seconds_start_active = false;
     settings.model_step_goal = 10000;
     settings.ui_goal_icon_enabled = true;
     settings.ui_slot_contents[SLOT_LEFT] = SLOT_CONTENT_ICONS;
@@ -786,6 +813,23 @@ static void migrate_seconds_visibility(int version)
     settings.model_flick_disabled_on_quiet_time = false;
 }
 
+static void migrate_reveal_off(int version)
+{
+    if (version >= SETTINGS_VERSION_REVEAL_OFF)
+    {
+        return;
+    }
+    if (settings.model_show_seconds_tap_count != 0)
+    {
+        return;
+    }
+
+    settings.model_show_seconds_tap_count = 1;
+    settings.model_seconds_show_on_tap_duration = 0;
+    settings.model_seconds_start_active = true;
+    settings.model_hide_seconds_tap_count = 0;
+}
+
 static void settings_save(void)
 {
     persist_write_data(PERSIST_KEY_SETTINGS, &settings, sizeof(settings));
@@ -830,6 +874,9 @@ static void settings_update(DictionaryIterator *iter)
 
     assign_name(iter, &MESSAGE_KEY_ShowSecondsOnTapCount, s_tap_count_names,
                 &settings.model_show_seconds_tap_count, assign_int);
+    assign_name(iter, &MESSAGE_KEY_HideSecondsOnTapCount, s_tap_count_names,
+                &settings.model_hide_seconds_tap_count, assign_int);
+    assign_bool(iter, &MESSAGE_KEY_SecondsStartActive, &settings.model_seconds_start_active);
 
     assign_bool(iter, &MESSAGE_KEY_BtIconEnabled, &settings.ui_bt_icon_enabled);
     assign_bool(iter, &MESSAGE_KEY_QuietTimeIconEnabled, &settings.ui_quiet_time_icon_enabled);

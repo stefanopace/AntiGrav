@@ -16,8 +16,10 @@ static SubList s_list = {s_slots, SECONDS_MAX_SUBSCRIPTION, 0, &s_state};
 static int s_tick_subscription_handle = -1;
 static int s_battery_subscription = -1;
 static int s_quiet_time_subscription = -1;
-static int s_flick_subscription = -1;
+static int s_reveal_flick_subscription = -1;
+static int s_hide_flick_subscription = -1;
 static int s_timeout = 0;
+static uint32_t s_used_chain_id = 0;
 static bool s_quiet_time_active = false;
 static bool s_low_battery = false;
 
@@ -25,8 +27,13 @@ static void seconds_init(int tag);
 static void seconds_deinit();
 static void deactivate_on_low_battery(const BatteryState *state);
 static void deactivate_on_quiet_time(const QuietTimeState *state);
-static void reveal_seconds();
-static void update_active(int timeout);
+static void reveal_seconds(const FlickState *state);
+static void hide_seconds(const FlickState *state);
+static bool seconds_blocked();
+static void apply_visibility(bool active, int timeout);
+static void apply_startup_visibility();
+static bool chain_used(const FlickState *state);
+static void mark_chain(const FlickState *state);
 static void update_amount(const struct tm *tick);
 static void write_seconds();
 
@@ -51,23 +58,30 @@ static void seconds_init(int tag)
     {
         s_quiet_time_subscription = ag_quiet_time_subscribe(deactivate_on_quiet_time);
     }
-    if (ag_settings_seconds_reveal_on_flick_enabled())
+    int hide_count = ag_settings_get_hide_seconds_tap_count();
+    if (!(ag_settings_seconds_infinite() && hide_count == 0 && ag_settings_seconds_start_active()))
     {
-        s_flick_subscription = ag_flick_subscribe(reveal_seconds, ag_settings_get_show_seconds_tap_count());
+        s_reveal_flick_subscription = ag_flick_subscribe(reveal_seconds, ag_settings_get_show_seconds_tap_count());
     }
-    update_active(0);
+    if (hide_count != 0)
+    {
+        s_hide_flick_subscription = ag_flick_subscribe(hide_seconds, hide_count);
+    }
+    apply_startup_visibility();
 }
 
 static void seconds_deinit()
 {
     s_tick_subscription_handle = ag_tick_unsubscribe(s_tick_subscription_handle);
-    s_flick_subscription = ag_flick_unsubscribe(s_flick_subscription);
+    s_reveal_flick_subscription = ag_flick_unsubscribe(s_reveal_flick_subscription);
+    s_hide_flick_subscription = ag_flick_unsubscribe(s_hide_flick_subscription);
     s_quiet_time_subscription = ag_quiet_time_unsubscribe(s_quiet_time_subscription);
     s_battery_subscription = ag_battery_unsubscribe(s_battery_subscription);
     s_state.amount = 0;
     s_state.active = false;
     s_state.text[0] = '\0';
     s_timeout = 0;
+    s_used_chain_id = 0;
     s_quiet_time_active = false;
     s_low_battery = false;
 }
@@ -77,62 +91,113 @@ static void deactivate_on_low_battery(const BatteryState *state)
     if (s_low_battery != state->is_low)
     {
         s_low_battery = state->is_low;
-        update_active(s_timeout);
+        apply_startup_visibility();
     }
 }
 
 static void deactivate_on_quiet_time(const QuietTimeState *state)
 {
     s_quiet_time_active = state->active;
-    update_active(s_timeout);
+    apply_startup_visibility();
 }
 
-static void reveal_seconds()
+static void reveal_seconds(const FlickState *state)
 {
-    if (ag_settings_seconds_reveal_on_flick_enabled() && ag_settings_get_seconds_show_on_tap_duration() > 0)
+    if (chain_used(state))
     {
-        update_active(ag_settings_get_seconds_show_on_tap_duration() + 1);
+        return;
+    }
+
+    if (s_state.active)
+    {
+        // we reset the timeout timer when a reveal flick is detected while is already active
+        if (!ag_settings_seconds_infinite())
+        {
+            s_timeout = ag_settings_get_seconds_show_on_tap_duration();
+        }
+        // flick chain is not marked here to permit the same chain to deactivate the seconds
+        return;
+    }
+
+    apply_visibility(true, ag_settings_get_seconds_show_on_tap_duration());
+    if (s_state.active)
+    {
+        mark_chain(state);
     }
 }
 
-static void update_active(int timeout)
+static void hide_seconds(const FlickState *state)
 {
-    bool next_active_state = true;
+    if (chain_used(state) || !s_state.active)
+    {
+        return;
+    }
+
+    apply_visibility(false, 0);
+    if (!s_state.active)
+    {
+        mark_chain(state);
+    }
+}
+
+static bool seconds_blocked()
+{
     if (ag_settings_hide_seconds_on_low_battery() && s_low_battery)
     {
-        next_active_state = false;
-        s_timeout = 0;
+        return true;
     }
-    else if (ag_settings_seconds_disable_on_quiet_time() && s_quiet_time_active)
+    return ag_settings_seconds_disable_on_quiet_time() && s_quiet_time_active;
+}
+
+static void apply_visibility(bool active, int timeout)
+{
+    if (seconds_blocked() || !active)
     {
-        next_active_state = false;
-        s_timeout = 0;
+        active = false;
+        timeout = 0;
     }
-    else if (ag_settings_seconds_reveal_on_flick_enabled() && timeout <= 0)
+    else if (ag_settings_seconds_infinite())
     {
-        next_active_state = false;
-    }
-    else
-    {
-        s_timeout = timeout;
+        timeout = 0;
     }
 
-    if (next_active_state && !s_state.active)
+    if (active && !s_state.active)
     {
+        s_timeout = timeout;
         s_state.active = true;
         if (s_tick_subscription_handle == -1)
         {
             s_tick_subscription_handle = ag_tick_subscribe(update_amount, SECOND_UNIT);
         }
     }
-    else if (s_state.active && !next_active_state)
+    else if (s_state.active && !active)
     {
+        s_timeout = 0;
         s_state.active = false;
         s_state.amount = -1;
         s_tick_subscription_handle = ag_tick_unsubscribe(s_tick_subscription_handle);
         write_seconds();
         ag_subscription_notify_all(&s_list);
     }
+    else
+    {
+        s_timeout = timeout;
+    }
+}
+
+static void apply_startup_visibility()
+{
+    apply_visibility(ag_settings_seconds_start_active(), ag_settings_get_seconds_show_on_tap_duration());
+}
+
+static bool chain_used(const FlickState *state)
+{
+    return state->chain_id == s_used_chain_id;
+}
+
+static void mark_chain(const FlickState *state)
+{
+    s_used_chain_id = state->chain_id;
 }
 
 static void update_amount(const struct tm *tick)

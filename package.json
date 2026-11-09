@@ -113,7 +113,9 @@
       "GabbroDateAbove",
       "GabbroDateBelow",
       "PinPopupLarge",
-      "SecondsBarPlaceholder"
+      "SecondsBarPlaceholder",
+      "HideSecondsOnTapCount",
+      "SecondsStartActive"
     ],
     "resources": {
       "media": [
