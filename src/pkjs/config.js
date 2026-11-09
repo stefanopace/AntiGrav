@@ -1,4 +1,11 @@
 const flick_count_options = [
+  { "label": "Single flick", "value": "1" },
+  { "label": "Double flick", "value": "2" },
+  { "label": "Triple flick", "value": "3" },
+  { "label": "Quadruple flick", "value": "4" }
+];
+
+const hide_flick_count_options = [
   { "label": "Off", "value": "0" },
   { "label": "Single flick", "value": "1" },
   { "label": "Double flick", "value": "2" },
@@ -441,23 +448,36 @@ module.exports = [
     {
       "type": "select",
       "messageKey": "ShowSecondsOnTapCount",
-      "label": "Reveal on flick",
-      "description": "ⓘ Hides the seconds until you flick the watch the selected number of times. Off keeps them visible.",
-      "defaultValue": "0",
+      "label": "Reveal on:",
+      "defaultValue": "1",
       "options": flick_count_options
+    },
+    {
+      "type": "select",
+      "messageKey": "HideSecondsOnTapCount",
+      "label": "Hide on:",
+      "defaultValue": "0",
+      "options": hide_flick_count_options
     },
     {
       "type": "select",
       "messageKey": "ShowOnTapDuration",
       "label": "Reveal duration",
-      "defaultValue": "10",
+      "defaultValue": "Infinite",
       "options": [
+        { "label": "Infinite", "value": "Infinite" },
         { "label": "5 seconds", "value": "5" },
         { "label": "10 seconds", "value": "10" },
         { "label": "30 seconds", "value": "30" },
         { "label": "1 minute", "value": "60" },
         { "label": "2 minutes", "value": "120" }
       ]
+    },
+    {
+      "type": "toggle",
+      "messageKey": "SecondsStartActive",
+      "label": "Starts revealed",
+      "defaultValue": true
     },
     {
       "type": "toggle",

@@ -100,7 +100,9 @@
       "ColorIconPhoneLowBattery",
       "ColorIconPhoneCharging",
       "PinPopupLarge",
-      "SecondsBarPlaceholder"
+      "SecondsBarPlaceholder",
+      "HideSecondsOnTapCount",
+      "SecondsStartActive"
     ],
     "resources": {
       "media": [
