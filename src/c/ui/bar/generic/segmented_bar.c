@@ -8,6 +8,10 @@ static int segments_for_ceil(int value, int scale, int total_dots);
 
 void segmented_bar_render(Layer *layer, GContext *ctx, int value, int scale, char slot_mask, int bar_type, bool available, int bar_y, int bar_h, int empty_h, bool mirrored, GColor color)
 {
+    if (slot_mask == 0)
+    {
+        return;
+    }
 
     int dots_h = bar_h;
     int draw_y = bar_y;

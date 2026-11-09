@@ -45,9 +45,15 @@ const alignment_options = [
 ];
 
 const placeholder_options = [
-  { "label": "Thick", "value": "Thick" },
-  { "label": "Thin", "value": "Thin" },
-  { "label": "None", "value": "None" }
+  { "label": "Empty Thick", "value": "Thick" },
+  { "label": "Empty Thin", "value": "Thin" },
+  { "label": "None", "value": "None" },
+  { "label": "Watch battery", "value": "Battery" },
+  { "label": "Phone battery", "value": "PhoneBattery" },
+  { "label": "Step goal progress bar", "value": "Steps" },
+  { "label": "Split A", "value": "ComboA" },
+  { "label": "Split B", "value": "ComboB" },
+  { "label": "Split C", "value": "ComboC" }
 ];
 
 
@@ -101,7 +107,7 @@ function comboContents(section, name, topKey, bottomKey, topDefault, bottomDefau
   ]);
 }
 
-function textSource(section, whereId, name, alignKey, placeholderKey, note) {
+function textSource(section, whereId, name, alignKey, placeholderKey, note, placeholderDescription) {
   var items = [
     { "type": "heading", "id": whereId, "defaultValue": name, "size": "4" }
   ];
@@ -120,6 +126,7 @@ function textSource(section, whereId, name, alignKey, placeholderKey, note) {
       "type": "select",
       "messageKey": placeholderKey,
       "label": "Placeholder",
+      "description": placeholderDescription,
       "defaultValue": "Thick",
       "options": placeholder_options
     }
@@ -158,7 +165,7 @@ function colorBarGroup(colors) {
   return items;
 }
 
-function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefault) {
+function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefault, placeholderKey, placeholderDescription) {
   var items = [
     { "type": "heading", "id": whereId, "defaultValue": name, "size": "4" }
   ];
@@ -180,6 +187,16 @@ function barSource(section, whereId, name, styleKey, mirrorKey, note, styleDefau
       "defaultValue": false
     }
   );
+  if (placeholderKey) {
+    items.push({
+      "type": "select",
+      "messageKey": placeholderKey,
+      "label": "Placeholder",
+      "description": placeholderDescription,
+      "defaultValue": "Thick",
+      "options": placeholder_options
+    });
+  }
   return layoutItems(section, items);
 }
 
@@ -424,12 +441,12 @@ module.exports = [
   ].concat(comboContents("combo-a", "Split A", "ComboBarTop", "ComboBarBottom", "WatchBattery", "PhoneBattery"))
     .concat(comboContents("combo-b", "Split B", "ComboBTop", "ComboBBottom", "Seconds", "StepGoal"))
     .concat(comboContents("combo-c", "Split C", "ComboCTop", "ComboCBottom", "WatchBattery", "Seconds"))),
-  groupedSection("slots", textSource("source-icons", "source-icons-where", "Status icons", "IconsAlignment", "IconsPlaceholder", "ⓘ See the Status Icons tab")),
-  groupedSection("slots", textSource("source-seconds", "source-seconds-where", "Seconds", "SecondsAlignment", "SecondsPlaceholder", "ⓘ See the Behaviors tab")),
+  groupedSection("slots", textSource("source-icons", "source-icons-where", "Status icons", "IconsAlignment", "IconsPlaceholder", "ⓘ See the Status Icons tab", "ⓘ Shown only when there are no icons")),
+  groupedSection("slots", textSource("source-seconds", "source-seconds-where", "Seconds", "SecondsAlignment", "SecondsPlaceholder", "ⓘ See the Behaviors tab", "ⓘ Shown only while seconds are hidden")),
   groupedSection("slots", barSource("source-watch", "source-watch-where", "Watch battery", "BatteryStyle", "WatchBatteryMirrored")),
   groupedSection("slots", barSource("source-phone", "source-phone-where", "Phone battery", "PhoneBatteryStyle", "PhoneBatteryMirrored", "⚠︎ May not work on some devices", "Continuous")),
   groupedSection("slots", barSource("source-steps", "source-steps-where", "Step goal progress bar", "StepsStyle", "StepGoalMirrored", "ⓘ Set the goal in Behaviors", "Continuous")),
-  groupedSection("slots", barSource("source-seconds-bar", "source-seconds-bar-where", "Seconds bar", "SecondsBarStyle", "SecondsBarMirrored", "ⓘ See the Behaviors tab")),
+  groupedSection("slots", barSource("source-seconds-bar", "source-seconds-bar-where", "Seconds bar", "SecondsBarStyle", "SecondsBarMirrored", "ⓘ See the Behaviors tab", "5Bars", "SecondsBarPlaceholder", "ⓘ Shown only while seconds are hidden")),
 
 
 

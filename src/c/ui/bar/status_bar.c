@@ -38,6 +38,7 @@ static void show_phone_battery_icons(const PhoneBatteryState *state);
 static void show_steps_goal_reached_icon(const StepsState *state);
 static void draw_status_icons(GContext *ctx, GRect bounds, GTextAlignment align);
 static void update_status_buffer(void);
+static void sync_placeholder_mask(void);
 static IconColorId status_icon_color(char glyph);
 
 void status_bar_init(char slot_mask, GRect frame)
@@ -86,6 +87,7 @@ void status_bar_init(char slot_mask, GRect frame)
     {
         s_steps_subscription = ag_steps_subscribe(show_steps_goal_reached_icon);
     }
+    sync_placeholder_mask();
 }
 
 void status_bar_deinit(void)
@@ -108,7 +110,7 @@ static void status_bar_update_proc(Layer *layer, GContext *ctx)
 
     if (s_status_bar_buffer[0] == '\0')
     {
-        if (placeholder != SLOT_PLACEHOLDER_NONE)
+        if (!settings_placeholder_is_source(placeholder) && placeholder != SLOT_PLACEHOLDER_NONE)
         {
             continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_ICONS));
         }
@@ -350,7 +352,19 @@ static void update_status_buffer(void)
     }
 
     s_status_bar_buffer[i] = '\0';
+    sync_placeholder_mask();
     layer_mark_dirty(s_layer);
+}
+
+static void sync_placeholder_mask(void)
+{
+    const SlotPlaceholder placeholder = settings_get_text_placeholder(SLOT_CONTENT_ICONS);
+    if (s_status_bar_buffer[0] == '\0')
+    {
+        slots_mask_include(placeholder, s_slot_mask);
+        return;
+    }
+    slots_mask_exclude(placeholder, s_slot_mask);
 }
 
 static IconColorId status_icon_color(char glyph)

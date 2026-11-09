@@ -16,6 +16,11 @@ static void half_bar_render_segmented(Layer *layer, GContext *ctx, int bar_y, in
 
 void combo_bar_render(Layer *layer, GContext *ctx, int top_value, int top_scale, bool top_available, BarStyle top_style, int top_bar_type, bool top_mirrored, GColor top_color, int bottom_value, int bottom_scale, bool bottom_available, BarStyle bottom_style, int bottom_bar_type, bool bottom_mirrored, GColor bottom_color, char slot_mask)
 {
+    if (slot_mask == 0)
+    {
+        return;
+    }
+
     half_bar_render(layer, ctx, TOP, top_style, top_value, top_scale, top_available, top_bar_type, top_mirrored, top_color, slot_mask);
     half_bar_render(layer, ctx, BOTTOM, bottom_style, bottom_value, bottom_scale, bottom_available, bottom_bar_type, bottom_mirrored, bottom_color, slot_mask);
 }

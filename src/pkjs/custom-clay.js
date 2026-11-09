@@ -13,6 +13,8 @@ module.exports = function() {
     { section: "combo-c", value: "ComboC", label: "Split C", top: "ComboCTop", bottom: "ComboCBottom" }
   ];
 
+  var PLACEHOLDER_FIELDS = ["IconsPlaceholder", "SecondsPlaceholder", "SecondsBarPlaceholder"];
+
   var SOURCES = [
     { section: "source-icons", whereId: "source-icons-where", slots: ["Icons"], combos: [] },
     { section: "source-seconds", whereId: "source-seconds-where", slots: ["Seconds"], combos: [] },
@@ -80,6 +82,36 @@ module.exports = function() {
     return false;
   }
 
+  function placeholderUses(value) {
+    for (var i = 0; i < PLACEHOLDER_FIELDS.length; i++) {
+      if (itemValue(PLACEHOLDER_FIELDS[i]) === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function placeholderSplitUses(source) {
+    for (var i = 0; i < COMBOS.length; i++) {
+      if (!placeholderUses(COMBOS[i].value)) {
+        continue;
+      }
+      if (contains(source.combos, itemValue(COMBOS[i].top)) || contains(source.combos, itemValue(COMBOS[i].bottom))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function placeholderSelects(source) {
+    for (var i = 0; i < source.slots.length; i++) {
+      if (placeholderUses(source.slots[i])) {
+        return true;
+      }
+    }
+    return placeholderSplitUses(source);
+  }
+
   function placesFor(source) {
     var places = [];
     for (var i = 0; i < SLOT_FIELDS.length; i++) {
@@ -104,12 +136,12 @@ module.exports = function() {
     var active = {};
     var i;
     for (i = 0; i < COMBOS.length; i++) {
-      if (slotUses(COMBOS[i].value)) {
+      if (slotUses(COMBOS[i].value) || placeholderUses(COMBOS[i].value)) {
         active[COMBOS[i].section] = true;
       }
     }
     for (i = 0; i < SOURCES.length; i++) {
-      if (placesFor(SOURCES[i]).length > 0) {
+      if (placesFor(SOURCES[i]).length > 0 || placeholderSelects(SOURCES[i])) {
         active[SOURCES[i].section] = true;
       }
     }
@@ -155,7 +187,12 @@ module.exports = function() {
       }
       var source = sourceByWhereId(items[i].id);
       if (source && active[section]) {
-        items[i].set(items[i].config.defaultValue + " (" + placesFor(source).join(", ") + ")");
+        var places = placesFor(source);
+        var title = items[i].config.defaultValue;
+        if (places.length > 0) {
+          title += " (" + places.join(", ") + ")";
+        }
+        items[i].set(title);
       }
     }
   }
@@ -164,6 +201,9 @@ module.exports = function() {
     var active = activeSections();
     if (emptyIsUsed()) {
       active["source-empty"] = true;
+    }
+    if (active["source-seconds-bar"]) {
+      active["source-seconds"] = true;
     }
     if (active["source-watch"] || active["source-phone"] || active["source-steps"] || active["source-seconds-bar"] || active["source-empty"] || active["source-icons"] || active["source-seconds"]) {
       active["bar-colors"] = true;
@@ -205,6 +245,9 @@ module.exports = function() {
     for (i = 0; i < COMBOS.length; i++) {
       keys.push(COMBOS[i].top);
       keys.push(COMBOS[i].bottom);
+    }
+    for (i = 0; i < PLACEHOLDER_FIELDS.length; i++) {
+      keys.push(PLACEHOLDER_FIELDS[i]);
     }
     for (i = 0; i < keys.length; i++) {
       var item = clayConfig.getItemByMessageKey(keys[i]);

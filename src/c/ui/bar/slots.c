@@ -99,3 +99,82 @@ void slots_deinit()
     phone_battery_bar_deinit();
     battery_bar_deinit();
 }
+
+static void slots_mask_change(SlotPlaceholder placeholder, char bits, bool include)
+{
+    switch (placeholder)
+    {
+    case SLOT_PLACEHOLDER_BATTERY:
+        if (include)
+        {
+            battery_bar_mask_include(bits);
+        }
+        else
+        {
+            battery_bar_mask_exclude(bits);
+        }
+        break;
+    case SLOT_PLACEHOLDER_PHONE_BATTERY:
+        if (include)
+        {
+            phone_battery_bar_mask_include(bits);
+        }
+        else
+        {
+            phone_battery_bar_mask_exclude(bits);
+        }
+        break;
+    case SLOT_PLACEHOLDER_STEPS:
+        if (include)
+        {
+            steps_bar_mask_include(bits);
+        }
+        else
+        {
+            steps_bar_mask_exclude(bits);
+        }
+        break;
+    case SLOT_PLACEHOLDER_COMBO_A:
+        if (include)
+        {
+            combo_slot_mask_include(COMBO_BAR_A, bits);
+        }
+        else
+        {
+            combo_slot_mask_exclude(COMBO_BAR_A, bits);
+        }
+        break;
+    case SLOT_PLACEHOLDER_COMBO_B:
+        if (include)
+        {
+            combo_slot_mask_include(COMBO_BAR_B, bits);
+        }
+        else
+        {
+            combo_slot_mask_exclude(COMBO_BAR_B, bits);
+        }
+        break;
+    case SLOT_PLACEHOLDER_COMBO_C:
+        if (include)
+        {
+            combo_slot_mask_include(COMBO_BAR_C, bits);
+        }
+        else
+        {
+            combo_slot_mask_exclude(COMBO_BAR_C, bits);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void slots_mask_include(SlotPlaceholder placeholder, char bits)
+{
+    slots_mask_change(placeholder, bits, true);
+}
+
+void slots_mask_exclude(SlotPlaceholder placeholder, char bits)
+{
+    slots_mask_change(placeholder, bits, false);
+}

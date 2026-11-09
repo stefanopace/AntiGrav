@@ -112,7 +112,8 @@
       "InvertColors",
       "GabbroDateAbove",
       "GabbroDateBelow",
-      "PinPopupLarge"
+      "PinPopupLarge",
+      "SecondsBarPlaceholder"
     ],
     "resources": {
       "media": [

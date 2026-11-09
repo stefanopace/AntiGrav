@@ -90,6 +90,7 @@ typedef struct ClaySettings
     GabbroDateContent ui_gabbro_date_above;
     GabbroDateContent ui_gabbro_date_below;
     PinPopupLarge ui_pin_popup_large;
+    SlotPlaceholder ui_seconds_bar_placeholder;
 } ClaySettings;
 
 _Static_assert(sizeof(ClaySettings) <= PERSIST_DATA_MAX_LENGTH, "ClaySettings exceeds persist limit");
@@ -218,6 +219,12 @@ static const SettingName s_placeholder_names[] = {
     {"Thick", SLOT_PLACEHOLDER_THICK},
     {"None", SLOT_PLACEHOLDER_NONE},
     {"Thin", SLOT_PLACEHOLDER_THIN},
+    {"Battery", SLOT_PLACEHOLDER_BATTERY},
+    {"PhoneBattery", SLOT_PLACEHOLDER_PHONE_BATTERY},
+    {"Steps", SLOT_PLACEHOLDER_STEPS},
+    {"ComboA", SLOT_PLACEHOLDER_COMBO_A},
+    {"ComboB", SLOT_PLACEHOLDER_COMBO_B},
+    {"ComboC", SLOT_PLACEHOLDER_COMBO_C},
     {NULL, 0},
 };
 
@@ -393,7 +400,32 @@ SlotPlaceholder settings_get_text_placeholder(SlotContent content)
     {
         return settings.ui_seconds_placeholder;
     }
+    if (content == SLOT_CONTENT_SECONDS_BAR)
+    {
+        return settings.ui_seconds_bar_placeholder;
+    }
     return settings.ui_icons_placeholder;
+}
+
+bool settings_placeholder_is_source(SlotPlaceholder placeholder)
+{
+    switch (placeholder)
+    {
+    case SLOT_PLACEHOLDER_BATTERY:
+    case SLOT_PLACEHOLDER_PHONE_BATTERY:
+    case SLOT_PLACEHOLDER_STEPS:
+    case SLOT_PLACEHOLDER_COMBO_A:
+    case SLOT_PLACEHOLDER_COMBO_B:
+    case SLOT_PLACEHOLDER_COMBO_C:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool settings_placeholder_is_selected(SlotPlaceholder placeholder)
+{
+    return settings_get_text_placeholder(SLOT_CONTENT_ICONS) == placeholder || settings_get_text_placeholder(SLOT_CONTENT_SECONDS) == placeholder || settings_get_text_placeholder(SLOT_CONTENT_SECONDS_BAR) == placeholder;
 }
 
 SlotContent settings_get_combo_bar_top(ComboBarId combo)
@@ -672,6 +704,7 @@ static void default_settings(void)
     settings.ui_seconds_alignment = SLOT_ALIGN_AUTOMATIC;
     settings.ui_icons_placeholder = SLOT_PLACEHOLDER_THICK;
     settings.ui_seconds_placeholder = SLOT_PLACEHOLDER_THICK;
+    settings.ui_seconds_bar_placeholder = SLOT_PLACEHOLDER_THICK;
     settings.ui_battery_color = 0x00FFAA;
     settings.ui_phone_bar_color = 0x00FFAA;
     settings.ui_steps_color = 0x00FFAA;
@@ -825,6 +858,7 @@ static void settings_update(DictionaryIterator *iter)
     assign_name(iter, &MESSAGE_KEY_SecondsAlignment, s_alignment_names, &settings.ui_seconds_alignment, assign_enum);
     assign_name(iter, &MESSAGE_KEY_IconsPlaceholder, s_placeholder_names, &settings.ui_icons_placeholder, assign_enum);
     assign_name(iter, &MESSAGE_KEY_SecondsPlaceholder, s_placeholder_names, &settings.ui_seconds_placeholder, assign_enum);
+    assign_name(iter, &MESSAGE_KEY_SecondsBarPlaceholder, s_placeholder_names, &settings.ui_seconds_bar_placeholder, assign_enum);
 
     assign_bool(iter, &MESSAGE_KEY_HideSecondsOnLowBattery, &settings.model_hide_seconds_on_low_battery);
 

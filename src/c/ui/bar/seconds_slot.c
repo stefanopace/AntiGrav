@@ -16,6 +16,7 @@ static int s_seconds_subscription = -1;
 
 static void seconds_slot_update_proc(Layer *layer, GContext *ctx);
 static void update_buffer(const SecondsState *state);
+static void sync_placeholder_mask(void);
 static void pad_narrow_ones(const char *seconds);
 
 void seconds_slot_init(char slot_mask, GRect frame)
@@ -53,7 +54,7 @@ static void seconds_slot_update_proc(Layer *layer, GContext *ctx)
 
     if (!s_active)
     {
-        if (placeholder != SLOT_PLACEHOLDER_NONE)
+        if (!settings_placeholder_is_source(placeholder) && placeholder != SLOT_PLACEHOLDER_NONE)
         {
             continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_SECONDS));
         }
@@ -178,7 +179,19 @@ static void update_buffer(const SecondsState *state)
     {
         pad_narrow_ones(state->text);
     }
+    sync_placeholder_mask();
     layer_mark_dirty(s_layer);
+}
+
+static void sync_placeholder_mask(void)
+{
+    const SlotPlaceholder placeholder = settings_get_text_placeholder(SLOT_CONTENT_SECONDS);
+    if (!s_active)
+    {
+        slots_mask_include(placeholder, s_slot_mask);
+        return;
+    }
+    slots_mask_exclude(placeholder, s_slot_mask);
 }
 
 static void pad_narrow_ones(const char *seconds)

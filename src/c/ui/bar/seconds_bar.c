@@ -5,6 +5,7 @@
 #include "../../models/seconds.h"
 #include "../layout.h"
 #include "seconds_bar.h"
+#include "slots.h"
 #include "generic/continuous_bar.h"
 #include "generic/segmented_bar.h"
 
@@ -16,6 +17,7 @@ static int s_seconds_subscription = -1;
 
 static void seconds_bar_update_proc(Layer *layer, GContext *ctx);
 static void update_seconds(const SecondsState *state);
+static void sync_placeholder_mask(void);
 
 void seconds_bar_init(char slot_mask, GRect frame)
 {
@@ -48,6 +50,16 @@ void seconds_bar_deinit(void)
 
 static void seconds_bar_update_proc(Layer *layer, GContext *ctx)
 {
+    const SlotPlaceholder placeholder = settings_get_text_placeholder(SLOT_CONTENT_SECONDS_BAR);
+    if (!s_available)
+    {
+        if (!settings_placeholder_is_source(placeholder) && placeholder != SLOT_PLACEHOLDER_NONE)
+        {
+            continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_SECONDS));
+        }
+        return;
+    }
+
     const BarStyle style = settings_get_bar_style(SLOT_CONTENT_SECONDS);
     const bool mirrored = settings_get_bar_mirrored(SLOT_CONTENT_SECONDS);
     const GColor color = colors_get_bar(SLOT_CONTENT_SECONDS);
@@ -82,14 +94,24 @@ static void update_seconds(const SecondsState *state)
         amount = 0;
     }
 
-    if (s_amount == amount && s_available == available)
+    const bool changed = s_amount != amount || s_available != available;
+    s_amount = amount;
+    s_available = available;
+    sync_placeholder_mask();
+    if (!changed || !s_layer)
     {
         return;
     }
-    s_amount = amount;
-    s_available = available;
-    if (s_layer)
+    layer_mark_dirty(s_layer);
+}
+
+static void sync_placeholder_mask(void)
+{
+    const SlotPlaceholder placeholder = settings_get_text_placeholder(SLOT_CONTENT_SECONDS_BAR);
+    if (!s_available)
     {
-        layer_mark_dirty(s_layer);
+        slots_mask_include(placeholder, s_slot_mask);
+        return;
     }
+    slots_mask_exclude(placeholder, s_slot_mask);
 }
