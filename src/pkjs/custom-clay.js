@@ -211,9 +211,31 @@ module.exports = function() {
     syncMarkedSections("colorSection", active);
   }
 
+  function comboIsSelected() {
+    for (var i = 0; i < COMBOS.length; i++) {
+      if (slotUses(COMBOS[i].value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function syncComboWarning() {
+    var warning = clayConfig.getItemById("combo-style-warning");
+    if (!warning) {
+      return;
+    }
+    if (comboIsSelected()) {
+      warning.show();
+    } else {
+      warning.hide();
+    }
+  }
+
   function syncContextualVisibility(name) {
     if (name === "slots") {
       syncLayoutVisibility();
+      syncComboWarning();
     } else if (name === "colors") {
       syncColorVisibility();
     }

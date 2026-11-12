@@ -112,14 +112,14 @@ static void status_bar_update_proc(Layer *layer, GContext *ctx)
     {
         if (!settings_placeholder_is_source(placeholder) && placeholder != SLOT_PLACEHOLDER_NONE)
         {
-            continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_ICONS));
+            continuous_plain_bar_render(layer, ctx, 100, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_ICONS));
         }
         return;
     }
 
     if (placeholder != SLOT_PLACEHOLDER_NONE)
     {
-        continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, false, false, colors_get_placeholder(PLACEHOLDER_ICONS));
+        continuous_plain_bar_render(layer, ctx, 100, 1, s_slot_mask, false, false, colors_get_placeholder(PLACEHOLDER_ICONS));
     }
 
     GRect bounds = GRect(0, 0, SLOTS_SINGLE_W, SLOTS_H);

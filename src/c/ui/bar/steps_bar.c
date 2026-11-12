@@ -6,6 +6,8 @@
 #include "../layout.h"
 #include "steps_bar.h"
 #include "generic/continuous_bar.h"
+#include "generic/fill_bar.h"
+#include "generic/inverted_fill_bar.h"
 #include "generic/segmented_bar.h"
 
 static int s_steps;
@@ -85,9 +87,17 @@ static void steps_slot_update_proc(Layer *layer, GContext *ctx)
         steps = 0;
         goal = 1;
     }
-    if (style == CONTINUOUS)
+    if (style == FILL)
     {
-        continuous_bar_render(layer, ctx, steps, goal, s_slot_mask, true, mirrored, color);
+        fill_bar_render(layer, ctx, steps, goal, s_slot_mask, true, mirrored, color);
+    }
+    else if (style == INVERTED_FILL)
+    {
+        inverted_fill_bar_render(layer, ctx, steps, goal, s_slot_mask, true, mirrored, color);
+    }
+    else if (style == CONTINUOUS)
+    {
+        continuous_plain_bar_render(layer, ctx, steps, goal, s_slot_mask, true, mirrored, color);
     }
     else
     {

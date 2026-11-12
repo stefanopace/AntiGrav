@@ -18,7 +18,8 @@ enum
     SETTINGS_VERSION_SECONDS_VISIBILITY = 3,
     SETTINGS_VERSION_COMBO_CONTENT = 4,
     SETTINGS_VERSION_REVEAL_OFF = 5,
-    SETTINGS_VERSION_CURRENT = SETTINGS_VERSION_REVEAL_OFF,
+    SETTINGS_VERSION_FILL = 6,
+    SETTINGS_VERSION_CURRENT = SETTINGS_VERSION_FILL,
 };
 
 typedef struct ClaySettings
@@ -258,6 +259,8 @@ static const SettingName s_slot_names[] = {
 static const SettingName s_battery_style_names[] = {
     {"5Bars", FIVE_BARS},
     {"Continuous", CONTINUOUS},
+    {"Fill", FILL},
+    {"InvertedFill", INVERTED_FILL},
     {NULL, 0},
 };
 
@@ -267,6 +270,7 @@ static void migrate_persisted_font(int version);
 static void migrate_seconds_visibility(int version);
 static void migrate_combo_contents(int version);
 static void migrate_reveal_off(int version);
+static void migrate_fill(int version);
 static void settings_save(void);
 static void apply_message(DictionaryIterator *iter);
 static void settings_update(DictionaryIterator *iter);
@@ -594,6 +598,7 @@ void ag_settings_init(void (*reset)(void))
                 migrate_seconds_visibility(version);
                 migrate_combo_contents(version);
                 migrate_reveal_off(version);
+                migrate_fill(version);
                 settings_save();
             }
         }
@@ -683,7 +688,7 @@ static void default_settings(void)
     settings.model_seconds_show_on_tap_duration = 10;
     settings.ui_font = FONT_REPLICANT;
     settings.ui_battery_style = FIVE_BARS;
-    settings.ui_steps_style = CONTINUOUS;
+    settings.ui_steps_style = FILL;
     settings.ui_bt_icon_enabled = true;
     settings.ui_quiet_time_icon_enabled = true;
     settings.ui_am_pm_icon_enabled = false;
@@ -721,7 +726,7 @@ static void default_settings(void)
     settings.ui_palette_override[COLOR_USER_DATE] = 0xFFFFFF;
     settings.ui_palette_override[COLOR_USER_ADVANCED_BACKGROUND] = 0x000000;
     settings.model_hide_seconds_on_quiet_time = false;
-    settings.ui_phone_bar_style = CONTINUOUS;
+    settings.ui_phone_bar_style = FILL;
     settings.ui_seconds_bar_style = FIVE_BARS;
     settings.ui_battery_mirrored = false;
     settings.ui_phone_bar_mirrored = false;
@@ -828,6 +833,31 @@ static void migrate_reveal_off(int version)
     settings.model_seconds_show_on_tap_duration = 0;
     settings.model_seconds_start_active = true;
     settings.model_hide_seconds_tap_count = 0;
+}
+
+static void migrate_fill(int version)
+{
+    if (version >= SETTINGS_VERSION_FILL)
+    {
+        return;
+    }
+
+    if (settings.ui_battery_style == CONTINUOUS)
+    {
+        settings.ui_battery_style = FILL;
+    }
+    if (settings.ui_phone_bar_style == CONTINUOUS)
+    {
+        settings.ui_phone_bar_style = FILL;
+    }
+    if (settings.ui_steps_style == CONTINUOUS)
+    {
+        settings.ui_steps_style = FILL;
+    }
+    if (settings.ui_seconds_bar_style == CONTINUOUS)
+    {
+        settings.ui_seconds_bar_style = FILL;
+    }
 }
 
 static void settings_save(void)
