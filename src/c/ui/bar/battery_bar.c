@@ -6,6 +6,8 @@
 #include "../layout.h"
 #include "battery_bar.h"
 #include "generic/continuous_bar.h"
+#include "generic/fill_bar.h"
+#include "generic/inverted_fill_bar.h"
 #include "generic/segmented_bar.h"
 
 static int s_percent;
@@ -76,9 +78,17 @@ static void battery_slot_update_proc(Layer *layer, GContext *ctx)
     const BarStyle style = settings_get_bar_style(SLOT_CONTENT_BATTERY);
     const bool mirrored = settings_get_bar_mirrored(SLOT_CONTENT_BATTERY);
     const GColor color = colors_get_bar(SLOT_CONTENT_BATTERY);
-    if (style == CONTINUOUS)
+    if (style == FILL)
     {
-        continuous_bar_render(layer, ctx, s_percent, 100, s_slot_mask, true, mirrored, color);
+        fill_bar_render(layer, ctx, s_percent, 100, s_slot_mask, true, mirrored, color);
+    }
+    else if (style == INVERTED_FILL)
+    {
+        inverted_fill_bar_render(layer, ctx, s_percent, 100, s_slot_mask, true, mirrored, color);
+    }
+    else if (style == CONTINUOUS)
+    {
+        continuous_plain_bar_render(layer, ctx, s_percent, 100, s_slot_mask, true, mirrored, color);
     }
     else
     {

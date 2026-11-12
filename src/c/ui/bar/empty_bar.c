@@ -35,5 +35,5 @@ void empty_bar_deinit(void)
 
 static void empty_slot_update_proc(Layer *layer, GContext *ctx)
 {
-    continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, true, false, colors_get_placeholder(PLACEHOLDER_EMPTY));
+    continuous_plain_bar_render(layer, ctx, 100, 1, s_slot_mask, true, false, colors_get_placeholder(PLACEHOLDER_EMPTY));
 }

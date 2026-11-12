@@ -7,6 +7,8 @@
 #include "seconds_bar.h"
 #include "slots.h"
 #include "generic/continuous_bar.h"
+#include "generic/fill_bar.h"
+#include "generic/inverted_fill_bar.h"
 #include "generic/segmented_bar.h"
 
 static int s_amount;
@@ -55,7 +57,7 @@ static void seconds_bar_update_proc(Layer *layer, GContext *ctx)
     {
         if (!settings_placeholder_is_source(placeholder) && placeholder != SLOT_PLACEHOLDER_NONE)
         {
-            continuous_bar_render(layer, ctx, 0, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_SECONDS));
+            continuous_plain_bar_render(layer, ctx, 100, 1, s_slot_mask, placeholder == SLOT_PLACEHOLDER_THICK, false, colors_get_placeholder(PLACEHOLDER_SECONDS));
         }
         return;
     }
@@ -63,9 +65,17 @@ static void seconds_bar_update_proc(Layer *layer, GContext *ctx)
     const BarStyle style = settings_get_bar_style(SLOT_CONTENT_SECONDS);
     const bool mirrored = settings_get_bar_mirrored(SLOT_CONTENT_SECONDS);
     const GColor color = colors_get_bar(SLOT_CONTENT_SECONDS);
-    if (style == CONTINUOUS)
+    if (style == FILL)
     {
-        continuous_bar_render(layer, ctx, s_amount, 60, s_slot_mask, s_available, mirrored, color);
+        fill_bar_render(layer, ctx, s_amount, 60, s_slot_mask, s_available, mirrored, color);
+    }
+    else if (style == INVERTED_FILL)
+    {
+        inverted_fill_bar_render(layer, ctx, s_amount, 60, s_slot_mask, s_available, mirrored, color);
+    }
+    else if (style == CONTINUOUS)
+    {
+        continuous_plain_bar_render(layer, ctx, s_amount, 60, s_slot_mask, s_available, mirrored, color);
     }
     else
     {

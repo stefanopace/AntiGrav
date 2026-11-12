@@ -3,6 +3,11 @@
 #include "segmented_bar.h"
 #include "../../layout.h"
 
+void segmented_combo_bar_render(Layer *layer, GContext *ctx, int bar_y, int bar_h, int value, int scale, bool available, int bar_type, bool mirrored, GColor color, char slot_mask)
+{
+    segmented_bar_render(layer, ctx, value, scale, slot_mask, bar_type, available, bar_y, bar_h, 0, mirrored, color);
+}
+
 static int segments_for_floor(int value, int scale, int total_dots);
 static int segments_for_ceil(int value, int scale, int total_dots);
 static int segment_width(int index, char slot_mask);

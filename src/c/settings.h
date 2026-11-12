@@ -13,6 +13,8 @@ typedef enum
 {
     CONTINUOUS = 0,
     FIVE_BARS = 1,
+    FILL = 2,
+    INVERTED_FILL = 3,
 } BarStyle;
 
 typedef enum
