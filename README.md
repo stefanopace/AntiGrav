@@ -32,9 +32,9 @@ Status icons for
 Seconds
 - Configurable to be:
     - always on
-    - hidden during Quiet Time
-    - revealed with a wrist flick
-    - off
+    - hidden during Quiet Time or low battery
+    - toggled with a wrist flick
+    - completely off
 - Configurable flick count and reveal duration, to avoid accidental activation and save battery
 - The seconds bar follows the same rules
 
