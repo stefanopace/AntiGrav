@@ -462,7 +462,7 @@ module.exports = [
   groupedSection("slots", barSource("source-watch", "source-watch-where", "Watch battery", "BatteryStyle", "WatchBatteryMirrored")),
   groupedSection("slots", barSource("source-phone", "source-phone-where", "Phone battery", "PhoneBatteryStyle", "PhoneBatteryMirrored", "⚠︎ May not work on some devices", "Fill")),
   groupedSection("slots", barSource("source-steps", "source-steps-where", "Step goal progress bar", "StepsStyle", "StepGoalMirrored", "ⓘ Set the goal in Behaviors", "Fill")),
-  groupedSection("slots", barSource("source-seconds-bar", "source-seconds-bar-where", "Seconds bar", "SecondsBarStyle", "SecondsBarMirrored", "ⓘ See the Behaviors tab", "5Bars", "SecondsBarPlaceholder", "ⓘ Shown only while seconds are hidden")),
+  groupedSection("slots", barSource("source-seconds-bar", "source-seconds-bar-where", "Seconds bar", "SecondsBarStyle", "SecondsBarMirrored", "ⓘ See the Behaviors tab", "5Bars", "SecondsBarPlaceholder", "ⓘ Shown only while seconds are hidden. Does not apply in a combo")),
 
 
 

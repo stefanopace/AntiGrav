@@ -13,7 +13,11 @@ module.exports = function() {
     { section: "combo-c", value: "ComboC", label: "Split C", top: "ComboCTop", bottom: "ComboCBottom" }
   ];
 
-  var PLACEHOLDER_FIELDS = ["IconsPlaceholder", "SecondsPlaceholder", "SecondsBarPlaceholder"];
+  var PLACEHOLDERS = [
+    { key: "IconsPlaceholder", section: "source-icons" },
+    { key: "SecondsPlaceholder", section: "source-seconds" },
+    { key: "SecondsBarPlaceholder", section: "source-seconds-bar" }
+  ];
 
   var SOURCES = [
     { section: "source-icons", whereId: "source-icons-where", slots: ["Icons"], combos: [] },
@@ -82,9 +86,26 @@ module.exports = function() {
     return false;
   }
 
+  function sourceBySection(section) {
+    for (var i = 0; i < SOURCES.length; i++) {
+      if (SOURCES[i].section === section) {
+        return SOURCES[i];
+      }
+    }
+    return null;
+  }
+
+  function placeholderOwnerVisible(section) {
+    var source = sourceBySection(section);
+    return source !== null && placesFor(source).length > 0;
+  }
+
   function placeholderUses(value) {
-    for (var i = 0; i < PLACEHOLDER_FIELDS.length; i++) {
-      if (itemValue(PLACEHOLDER_FIELDS[i]) === value) {
+    for (var i = 0; i < PLACEHOLDERS.length; i++) {
+      if (itemValue(PLACEHOLDERS[i].key) !== value) {
+        continue;
+      }
+      if (placeholderOwnerVisible(PLACEHOLDERS[i].section)) {
         return true;
       }
     }
@@ -268,8 +289,8 @@ module.exports = function() {
       keys.push(COMBOS[i].top);
       keys.push(COMBOS[i].bottom);
     }
-    for (i = 0; i < PLACEHOLDER_FIELDS.length; i++) {
-      keys.push(PLACEHOLDER_FIELDS[i]);
+    for (i = 0; i < PLACEHOLDERS.length; i++) {
+      keys.push(PLACEHOLDERS[i].key);
     }
     for (i = 0; i < keys.length; i++) {
       var item = clayConfig.getItemByMessageKey(keys[i]);
