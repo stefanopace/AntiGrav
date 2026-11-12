@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "unobstructed.h"
+#include "../settings.h"
 #include "../subscription.h"
 
 #define UNOBSTRUCTED_MAX_SUBSCRIPTION 1
@@ -91,8 +92,14 @@ static void apply_area(GRect area)
     s_state.area = area;
     s_state.shift_y = shift_y;
 
+    int16_t layer_shift = shift_y;
+    if (settings_get_pin_popup_large() == PIN_POPUP_LARGE_BOTH)
+    {
+        layer_shift = (int16_t)(-shift_y);
+    }
+
     GRect frame = screen;
-    frame.origin.y = (int16_t)(screen.origin.y + shift_y);
+    frame.origin.y = (int16_t)(screen.origin.y + layer_shift);
     layer_set_frame(s_shifting_layer, frame);
 
     ag_subscription_notify_all(&s_list);

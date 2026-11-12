@@ -110,6 +110,7 @@ typedef enum
 {
     PIN_POPUP_LARGE_MINUTES = 0,
     PIN_POPUP_LARGE_HOURS = 1,
+    PIN_POPUP_LARGE_BOTH = 2,
 } PinPopupLarge;
 
 void ag_settings_init(void (*reset)(void));

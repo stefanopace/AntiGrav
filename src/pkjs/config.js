@@ -351,7 +351,8 @@ module.exports = [
       "defaultValue": "Minutes",
       "options": [
         { "label": "Minutes", "value": "Minutes" },
-        { "label": "Hours", "value": "Hours" }
+        { "label": "Hours", "value": "Hours" },
+        { "label": "Both", "value": "Both" }
       ]
     },
     {

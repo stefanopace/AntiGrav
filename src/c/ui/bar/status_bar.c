@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "status_bar.h"
+#include "../../models/unobstructed.h"
 #include "../layout.h"
 #include "../../models/battery.h"
 #include "../../models/phone_battery.h"
@@ -102,7 +103,8 @@ void status_bar_init(void)
 
     s_layer = layer_create(GRect(STATUS_BAR_X, STATUS_BAR_Y, STATUS_BAR_W, STATUS_BAR_H));
     layer_set_update_proc(s_layer, status_bar_update_proc);
-    layer_add_child(layout_parent_layer(), s_layer);
+    Layer *parent = settings_get_pin_popup_large() == PIN_POPUP_LARGE_BOTH ? ag_unobstructed_fixed_layer() : layout_parent_layer();
+    layer_add_child(parent, s_layer);
 
     if (settings_bt_icon_enabled())
     {

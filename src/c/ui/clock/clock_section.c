@@ -39,7 +39,8 @@ void clock_section_init()
 
     Layer *parent = layout_parent_layer();
     Layer *fixed = ag_unobstructed_fixed_layer();
-    big_clock_init(fixed, parent);
+    Layer *minutes_parent = settings_get_pin_popup_large() == PIN_POPUP_LARGE_BOTH ? fixed : parent;
+    big_clock_init(fixed, minutes_parent);
     compact_clock_init(parent, parent);
     pm_marker_init(fixed);
     s_unobstructed_subscription = ag_unobstructed_subscribe(rearrange_layers);
@@ -59,8 +60,9 @@ void clock_section_deinit()
 static void rearrange_layers(const UnobstructedState *state)
 {
     const bool popup = state->shift_y != 0;
-    const bool hours_large = !popup || settings_get_pin_popup_large() == PIN_POPUP_LARGE_HOURS;
-    const bool minutes_large = !popup || settings_get_pin_popup_large() == PIN_POPUP_LARGE_MINUTES;
+    const PinPopupLarge large = settings_get_pin_popup_large();
+    const bool hours_large = !popup || large == PIN_POPUP_LARGE_HOURS || large == PIN_POPUP_LARGE_BOTH;
+    const bool minutes_large = !popup || large == PIN_POPUP_LARGE_MINUTES || large == PIN_POPUP_LARGE_BOTH;
     big_clock_set_visible(hours_large, minutes_large);
     compact_clock_set_visible(!hours_large, !minutes_large);
 }

@@ -179,6 +179,7 @@ static const SettingName s_date_separator_names[] = {
 static const SettingName s_pin_popup_large_names[] = {
     {"Minutes", PIN_POPUP_LARGE_MINUTES},
     {"Hours", PIN_POPUP_LARGE_HOURS},
+    {"Both", PIN_POPUP_LARGE_BOTH},
     {NULL, 0},
 };
 
